@@ -311,63 +311,9 @@ const NAV_ITEMS = [
         ],
       },
       {
-        title: 'Blog',
-        path: '#',
-        icon: <Iconify icon="carbon:3d-mpr-toggle" width={1} />,
-        children: [
-          { title: 'Blog Posts', path: '#' },
-          { title: 'Blog Post', path: '#' },
-        ],
-      },
-      {
-        title: 'About',
-        path: '#',
-        icon: <Iconify icon="carbon:airport-01" width={1} />,
-      },
-      {
         title: 'Contact',
         path: '#',
         icon: <Iconify icon="carbon:battery-full" width={1} />,
-      },
-      {
-        title: 'Tours',
-        path: '#',
-        icon: <Iconify icon="carbon:basketball" width={1} />,
-        children: [
-          { title: 'Tours', path: '#' },
-          { title: 'Tour', path: '#' },
-        ],
-      },
-      {
-        title: 'Checkout',
-        path: '#',
-        icon: <Iconify icon="carbon:area" width={1} />,
-        children: [
-          { title: 'Checkout', path: '#' },
-          { title: 'Checkout Complete', path: '#' },
-        ],
-      },
-    ],
-  },
-  {
-    subheader: 'Travel',
-    items: [
-      {
-        title: 'Level 1',
-        path: '#',
-        icon: <Iconify icon="carbon:play" width={1} />,
-        children: [
-          { title: 'Level 2.1', path: '#' },
-          { title: 'Level 2.2', path: '#' },
-          {
-            title: 'Level 2.3',
-            path: '#',
-            children: [
-              { title: 'Level 3.1', path: '#' },
-              { title: 'Level 3.2', path: '#' },
-            ],
-          },
-        ],
       },
     ],
   },

@@ -9,7 +9,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 // utils
 import { fTimestamp } from 'src/utils/format-time';
 // _mock
-import { _allFiles, FILE_TYPE_OPTIONS } from 'src/_mock';
+import { _allFiles, FILE_TYPE_OPTIONS } from 'src/_mock/_files';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
