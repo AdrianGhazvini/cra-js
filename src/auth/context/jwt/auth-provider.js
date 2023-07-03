@@ -59,12 +59,16 @@ export function AuthProvider({ children }) {
     try {
       const accessToken = sessionStorage.getItem(STORAGE_KEY);
 
+      console.log("Access token retrieved from session:", accessToken);
+
       if (accessToken && isValidToken(accessToken)) {
         setSession(accessToken);
 
         const response = await axios.get(endpoints.auth.me);
 
         const { user } = response.data;
+
+        console.log("User data from /api/auth/me:", user);
 
         dispatch({
           type: 'INITIAL',
@@ -124,6 +128,9 @@ export function AuthProvider({ children }) {
     const response = await axios.post(endpoints.auth.login, data);
 
     const { access: accessToken, refresh: refreshTokenValue, user } = response.data;
+
+    console.log("Access token from login:", accessToken);
+    console.log("Refresh token from login:", refreshTokenValue);
 
     // Save both access and refresh tokens. Consider using secure storage for refresh token.
     setSession(accessToken);
