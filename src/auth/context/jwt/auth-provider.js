@@ -95,6 +95,25 @@ export function AuthProvider({ children }) {
     initialize();
   }, [initialize]);
 
+  // LOGOUT
+  const logout = useCallback(async () => {
+    setSession(null);
+    dispatch({
+      type: 'LOGOUT',
+    });
+  }, []);
+
+  const refreshToken = useCallback(async (refreshTokenValue) => {
+    try {
+      const response = await axios.post(endpoints.auth.refresh, { refresh: refreshTokenValue });
+      const { access: newAccessToken } = response.data;
+      setSession(newAccessToken);
+    } catch (error) {
+      console.error(error);
+      logout();
+    }
+  }, [logout]);
+
   // LOGIN
   const login = useCallback(async (email, password) => {
     const data = {
@@ -125,9 +144,8 @@ export function AuthProvider({ children }) {
   }, [refreshToken]);
 
   // REGISTER
-  const register = useCallback(async (username, email, password, firstName, lastName) => {
+  const register = useCallback(async (email, password, firstName, lastName) => {
     const data = {
-      username,
       password,
       email,
       first_name: firstName,
@@ -143,25 +161,6 @@ export function AuthProvider({ children }) {
       console.error("User registration failed");
     }
   }, [login]);
-
-  // LOGOUT
-  const logout = useCallback(async () => {
-    setSession(null);
-    dispatch({
-      type: 'LOGOUT',
-    });
-  }, []);
-
-  const refreshToken = useCallback(async (refreshTokenValue) => {
-    try {
-      const response = await axios.post(endpoints.auth.refresh, { refresh: refreshTokenValue });
-      const { access: newAccessToken } = response.data;
-      setSession(newAccessToken);
-    } catch (error) {
-      console.error(error);
-      logout();
-    }
-  }, [logout]);
 
   // ----------------------------------------------------------------------
 

@@ -32,7 +32,7 @@ export const endpoints = {
   auth: {
     me: '/api/auth/me', 
     login: 'http://localhost:8000/login/',
-    register: 'http://localhost:8000/api/signup/', 
+    register: 'http://localhost:8000/signup/', 
   },
   mail: {
     list: '/api/mail/list',
