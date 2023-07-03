@@ -7,20 +7,13 @@ import axios, { endpoints } from 'src/utils/axios';
 import { AuthContext } from './auth-context';
 import { isValidToken, setSession } from './utils';
 
-// ----------------------------------------------------------------------
-
-// NOTE:
-// We only build demo at basic level.
-// Customer will need to do some extra handling yourself if you want to extend the logic and other features...
-
-// ----------------------------------------------------------------------
-
 const initialState = {
   user: null,
   loading: true,
 };
 
 const reducer = (state, action) => {
+  console.log(`Dispatching ${action.type} action...`); // Log the dispatched action
   if (action.type === 'INITIAL') {
     return {
       loading: false,
@@ -28,6 +21,7 @@ const reducer = (state, action) => {
     };
   }
   if (action.type === 'LOGIN') {
+    console.log(`Updating state with user: ${action.payload.user}`);
     return {
       ...state,
       user: action.payload.user,
@@ -45,10 +39,10 @@ const reducer = (state, action) => {
       user: null,
     };
   }
+  console.log(`State after dispatching ${action.type} action:`, state);
+
   return state;
 };
-
-// ----------------------------------------------------------------------
 
 const STORAGE_KEY = 'accessToken';
 
@@ -58,16 +52,14 @@ export function AuthProvider({ children }) {
   const initialize = useCallback(async () => {
     try {
       const accessToken = sessionStorage.getItem(STORAGE_KEY);
-
       console.log("Access token retrieved from session:", accessToken);
 
       if (accessToken && isValidToken(accessToken)) {
+        console.log("Token is valid");
         setSession(accessToken);
 
         const response = await axios.get(endpoints.auth.me);
-
         const { user } = response.data;
-
         console.log("User data from /api/auth/me:", user);
 
         dispatch({
@@ -77,6 +69,7 @@ export function AuthProvider({ children }) {
           },
         });
       } else {
+        console.log("No valid token found in session storage");
         dispatch({
           type: 'INITIAL',
           payload: {
@@ -85,7 +78,7 @@ export function AuthProvider({ children }) {
         });
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error during initialization:", error);
       dispatch({
         type: 'INITIAL',
         payload: {
@@ -96,11 +89,13 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
+    console.log("Running initialization...");
     initialize();
   }, [initialize]);
 
   // LOGOUT
   const logout = useCallback(async () => {
+    console.log("Logging out...");
     setSession(null);
     dispatch({
       type: 'LOGOUT',
@@ -109,17 +104,19 @@ export function AuthProvider({ children }) {
 
   const refreshToken = useCallback(async (refreshTokenValue) => {
     try {
+      console.log("Refreshing token...");
       const response = await axios.post(endpoints.auth.refresh, { refresh: refreshTokenValue });
       const { access: newAccessToken } = response.data;
       setSession(newAccessToken);
     } catch (error) {
-      console.error(error);
+      console.error("Error during token refresh:", error);
       logout();
     }
   }, [logout]);
 
   // LOGIN
   const login = useCallback(async (email, password) => {
+    console.log(`Logging in with email ${email}...`);
     const data = {
       email,
       password,
@@ -127,26 +124,28 @@ export function AuthProvider({ children }) {
 
     const response = await axios.post(endpoints.auth.login, data);
 
-    const { access: accessToken, refresh: refreshTokenValue, user } = response.data;
+    const { access: accessToken, refresh: refreshTokenValue, name } = response.data;
+    console.log("Response from /api/auth/login:", response.data);
 
-    console.log("Access token from login:", accessToken);
-    console.log("Refresh token from login:", refreshTokenValue);
-
-    // Save both access and refresh tokens. Consider using secure storage for refresh token.
     setSession(accessToken);
 
-    // Decode the token to get the expiration time
     const decodedToken = jwt_decode(accessToken);
     const expiresIn = decodedToken.exp;
 
-    // Set a timeout to refresh the access token a bit before it expires
     setTimeout(() => refreshToken(refreshTokenValue), (expiresIn * 1000) - (Date.now())); // 5 seconds before it expires
+
+    dispatch({
+      type: 'LOGIN',
+      payload: {
+        user: name,
+      },
+    });
 
   }, [refreshToken]);
 
-
   // REGISTER
   const register = useCallback(async (email, password, firstName, lastName) => {
+    console.log(`Registering new user with email ${email}...`);
     const data = {
       password,
       email,
@@ -162,13 +161,13 @@ export function AuthProvider({ children }) {
     } else {
       console.error("User registration failed");
     }
+
   }, [login]);
 
-  // ----------------------------------------------------------------------
-
   const checkAuthenticated = state.user ? 'authenticated' : 'unauthenticated';
-
   const status = state.loading ? 'loading' : checkAuthenticated;
+
+  console.log(`Current authentication status: ${status}`);
 
   const memoizedValue = useMemo(
     () => ({
