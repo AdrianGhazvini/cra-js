@@ -142,15 +142,8 @@ export function AuthProvider({ children }) {
     // Set a timeout to refresh the access token a bit before it expires
     setTimeout(() => refreshToken(refreshTokenValue), (expiresIn * 1000) - (Date.now())); // 5 seconds before it expires
 
-    // NEW: Call /api/auth/me endpoint after a successful login
-    try {
-      const meResponse = await axios.get(endpoints.auth.me);
-      const { email: userEmail, first_name, last_name } = meResponse.data; // use a different variable name to avoid shadowing
-      console.log("User data from /api/auth/me:", { userEmail, first_name, last_name });
-    } catch (error) {
-      console.error("Error when calling /api/auth/me:", error);
-    }
   }, [refreshToken]);
+
 
   // REGISTER
   const register = useCallback(async (email, password, firstName, lastName) => {
