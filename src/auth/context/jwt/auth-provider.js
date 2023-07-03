@@ -51,40 +51,71 @@ export function AuthProvider({ children }) {
 
   const initialize = useCallback(async () => {
     try {
+      console.log("Initialization started...");
+
       const accessToken = sessionStorage.getItem(STORAGE_KEY);
+
       console.log("Access token retrieved from session:", accessToken);
 
-      if (accessToken && isValidToken(accessToken)) {
-        console.log("Token is valid");
-        setSession(accessToken);
+      if (accessToken) {
+        console.log("Access token exists in session. Checking validity...");
 
-        const response = await axios.get(endpoints.auth.me);
-        const { user } = response.data;
-        console.log("User data from /api/auth/me:", user);
+        if (isValidToken(accessToken)) {
+          console.log("Token is valid. Setting session...");
 
-        dispatch({
-          type: 'INITIAL',
-          payload: {
-            user,
-          },
-        });
+          setSession(accessToken);
+
+          const response = await axios.get(endpoints.auth.me);
+          console.log("Response from /api/auth/me:", response.data);
+
+          // Note: Adjust this line to match the actual response structure.
+          const user = response.data;
+
+          console.log("User data from /api/auth/me:", user);
+
+          dispatch({
+            type: 'INITIAL',
+            payload: {
+              user,
+            },
+          });
+
+          console.log("Initialization completed with user data.");
+        } else {
+          console.log("Token is not valid. Setting user to null...");
+
+          dispatch({
+            type: 'INITIAL',
+            payload: {
+              user: null,
+            },
+          });
+
+          console.log("Initialization completed with no user data.");
+        }
       } else {
-        console.log("No valid token found in session storage");
+        console.log("No access token in session. Setting user to null...");
+
         dispatch({
           type: 'INITIAL',
           payload: {
             user: null,
           },
         });
+
+        console.log("Initialization completed with no user data.");
       }
     } catch (error) {
       console.error("Error during initialization:", error);
+
       dispatch({
         type: 'INITIAL',
         payload: {
           user: null,
         },
       });
+
+      console.log("Initialization completed with no user data due to error.");
     }
   }, []);
 
@@ -108,8 +139,16 @@ export function AuthProvider({ children }) {
       const response = await axios.post(endpoints.auth.refresh, { refresh: refreshTokenValue });
       const { access: newAccessToken } = response.data;
       setSession(newAccessToken);
+      console.log("New access token obtained:", newAccessToken);
+
+      // Decode the new token to get the new expiration time
+      const decodedToken = jwt_decode(newAccessToken);
+      const expiresIn = decodedToken.exp;
+
+      // Set a timeout to refresh the new access token a minute before it expires
+      setTimeout(() => refreshToken(refreshTokenValue), (expiresIn * 1000) - (Date.now() + 60000));
     } catch (error) {
-      console.error("Error during token refresh:", error);
+      console.error("Error refreshing token:", error);
       logout();
     }
   }, [logout]);
@@ -124,7 +163,10 @@ export function AuthProvider({ children }) {
 
     const response = await axios.post(endpoints.auth.login, data);
 
-    const { access: accessToken, refresh: refreshTokenValue, name } = response.data;
+    // Note: Adjust this line to match the actual response structure.
+    const { access: accessToken, refresh: refreshTokenValue } = response.data;
+    const user = response.data;
+
     console.log("Response from /api/auth/login:", response.data);
 
     setSession(accessToken);
@@ -132,12 +174,12 @@ export function AuthProvider({ children }) {
     const decodedToken = jwt_decode(accessToken);
     const expiresIn = decodedToken.exp;
 
-    setTimeout(() => refreshToken(refreshTokenValue), (expiresIn * 1000) - (Date.now())); // 5 seconds before it expires
+    setTimeout(() => refreshToken(refreshTokenValue), (expiresIn * 1000) - (Date.now() + 60000));
 
     dispatch({
       type: 'LOGIN',
       payload: {
-        user: name,
+        user,
       },
     });
 
