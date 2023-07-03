@@ -21,7 +21,6 @@ import {
   AccountPopover,
   SettingsButton,
   LanguagePopover,
-  NotificationsPopover,
 } from '../_common';
 
 // ----------------------------------------------------------------------
