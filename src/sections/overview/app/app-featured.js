@@ -10,19 +10,20 @@ import Card from '@mui/material/Card';
 import Image from 'src/components/image';
 import { MotionContainer, varFade } from 'src/components/animate';
 import Carousel, { CarouselDots, CarouselArrows, useCarousel } from 'src/components/carousel';
+import { Box } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
 export default function AppFeatured({ list, ...other }) {
   const carousel = useCarousel({
-    speed: 800,
+    speed: 6500,
     autoplay: true,
     ...CarouselDots({
       sx: {
         top: 16,
         left: 16,
         position: 'absolute',
-        color: 'primary.light',
+        color: 'white',
       },
     }),
   });
@@ -53,15 +54,14 @@ AppFeatured.propTypes = {
 function CarouselItem({ item, active }) {
   const theme = useTheme();
 
-  const { coverUrl, title, description } = item;
+  const { coverUrl, title } = item;
 
   const renderImg = (
     <Image
       alt={title}
       src={coverUrl}
-      overlay={`linear-gradient(to bottom, ${alpha(theme.palette.grey[900], 0)} 0%, ${
-        theme.palette.grey[900]
-      } 75%)`}
+      overlay={`linear-gradient(to bottom, ${alpha('#004B50', 0)} 0%, ${alpha('#004B50', 1)} 75%)`}
+
       sx={{
         width: 1,
         height: {
@@ -74,38 +74,27 @@ function CarouselItem({ item, active }) {
 
   return (
     <MotionContainer action animate={active} sx={{ position: 'relative' }}>
-      <Stack
-        spacing={1}
+      <Box
         sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
           p: 3,
           width: 1,
-          bottom: 0,
-          zIndex: 9,
-          textAlign: 'left',
+          height: 1,  // Fill entire parent height
           position: 'absolute',
-          color: 'common.white',
+          zIndex: 9,
+          textAlign: 'center', // center align the paragraph
+          color: 'common.white', // text color is white
         }}
       >
         <m.div variants={varFade().inRight}>
-          <Typography variant="overline" sx={{ color: 'primary.light' }}>
-            Featured App
+          <Typography variant="h5" sx={{ color: 'common.white', overflowWrap: 'break-word' }}>
+            {title} 
           </Typography>
         </m.div>
-
-        <m.div variants={varFade().inRight}>
-          <Link color="inherit" underline="none">
-            <Typography variant="h5" noWrap>
-              {title}
-            </Typography>
-          </Link>
-        </m.div>
-
-        <m.div variants={varFade().inRight}>
-          <Typography variant="body2" noWrap>
-            {description}
-          </Typography>
-        </m.div>
-      </Stack>
+      </Box>
 
       {renderImg}
     </MotionContainer>

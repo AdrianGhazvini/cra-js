@@ -2,7 +2,8 @@ import jwt_decode from 'jwt-decode';
 import PropTypes from 'prop-types';
 import { useEffect, useReducer, useCallback, useMemo } from 'react';
 // utils
-import axios, { endpoints } from 'src/utils/axios';
+import { endpoints } from 'src/utils/axios';
+import api from 'src/utils/api';
 //
 import { AuthContext } from './auth-context';
 import { isValidToken, setSession } from './utils';
@@ -65,7 +66,7 @@ export function AuthProvider({ children }) {
 
           setSession(accessToken);
 
-          const response = await axios.get(endpoints.auth.me);
+          const response = await api.get(endpoints.auth.me);
           console.log("Response from /api/auth/me:", response.data);
 
           // Note: Adjust this line to match the actual response structure.
@@ -136,7 +137,7 @@ export function AuthProvider({ children }) {
   const refreshToken = useCallback(async (refreshTokenValue) => {
     try {
       console.log("Refreshing token...");
-      const response = await axios.post(endpoints.auth.refresh, { refresh: refreshTokenValue });
+      const response = await api.post(endpoints.auth.refresh, { refresh: refreshTokenValue });
       const { access: newAccessToken } = response.data;
       setSession(newAccessToken);
       console.log("New access token obtained:", newAccessToken);
@@ -161,7 +162,7 @@ export function AuthProvider({ children }) {
       password,
     };
 
-    const response = await axios.post(endpoints.auth.login, data);
+    const response = await api.post(endpoints.auth.login, data);
 
     // Note: Adjust this line to match the actual response structure.
     const { access: accessToken, refresh: refreshTokenValue } = response.data;
@@ -195,7 +196,7 @@ export function AuthProvider({ children }) {
       last_name: lastName,
     };
 
-    const response = await axios.post(endpoints.auth.register, data);
+    const response = await api.post(endpoints.auth.register, data);
 
     if (response.status === 201) {
       console.log("User registered successfully");

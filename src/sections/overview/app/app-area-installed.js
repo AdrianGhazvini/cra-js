@@ -58,7 +58,7 @@ export default function AppAreaInstalled({ title, subheader, chart, ...other }) 
 
   return (
     <>
-      <Card {...other}>
+      <Card {...other} style={{ width: '100%', flexGrow: 1 }}>
         <CardHeader
           title={title}
           subheader={subheader}

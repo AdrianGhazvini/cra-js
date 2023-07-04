@@ -268,30 +268,9 @@ export const _roles = [
 // ----------------------------------------------------------------------
 
 export const _postTitles = [
-  '10 Essential Tips for Healthy Living',
-  'The Ultimate Guide to Productivity Hacks',
-  'Exploring the Hidden Gems of [Destination]',
-  'How to Master the Art of Public Speaking',
-  'The Future of Artificial Intelligence: Trends and Insights',
-  'Delicious Recipes for a Vegan Diet',
-  "A Beginner's Guide to Investing in Stocks",
-  'The Impact of Social Media on Society',
-  '10 Must-Visit Destinations for Adventure Travelers',
-  'The Benefits of Mindfulness Meditation',
-  'The Importance of Mental Health Awareness',
-  'Building a Strong Personal Brand: Tips and Strategies',
-  '10 Effective Strategies for Digital Marketing Success',
-  'Unveiling the Secrets of Successful Entrepreneurs',
-  'The Rise of Remote Work and its Impact on the Workforce',
-  'The Art of Landscape Photography: Techniques and Inspiration',
-  'Understanding Blockchain Technology and its Potential Applications',
-  'How to Create Engaging Content for Social Media',
-  'The Role of Artificial Intelligence in Healthcare',
-  '10 Home Organization Hacks for a Clutter-Free Space',
-  'Exploring the History and Culture of [City/Region]',
-  'The Power of Positive Thinking: Transform Your Mindset',
-  'The Influence of Music on Mood and Emotions',
-  'Travel Photography Tips: Capturing Memories Around the World',
+  'We send the dispute letters so you don’t have to',
+  'Monitor your credit with all three credit bureaus',
+  'Take charge of your financial future',
 ];
 
 // ----------------------------------------------------------------------

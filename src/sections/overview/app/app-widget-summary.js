@@ -13,7 +13,7 @@ import Chart from 'src/components/chart';
 
 // ----------------------------------------------------------------------
 
-export default function AppWidgetSummary({ title, percent, total, chart, sx, ...other }) {
+export default function AppWidgetSummary({ title, points, chart, sx, ...other }) {
   const theme = useTheme();
 
   const {
@@ -60,33 +60,34 @@ export default function AppWidgetSummary({ title, percent, total, chart, sx, ...
   return (
     <Card sx={{ display: 'flex', alignItems: 'center', p: 3, ...sx }} {...other}>
       <Box sx={{ flexGrow: 1 }}>
-        <Typography variant="subtitle2">{title}</Typography>
+        <Typography variant="h5">{title}</Typography>
 
         <Stack direction="row" alignItems="center" sx={{ mt: 2, mb: 1 }}>
           <Iconify
             width={24}
             icon={
-              percent < 0
+              points < 0
                 ? 'solar:double-alt-arrow-down-bold-duotone'
                 : 'solar:double-alt-arrow-up-bold-duotone'
             }
             sx={{
               mr: 1,
               color: 'success.main',
-              ...(percent < 0 && {
+              ...(points < 0 && {
                 color: 'error.main',
               }),
             }}
           />
 
-          <Typography component="div" variant="subtitle2">
-            {percent > 0 && '+'}
-
-            {fPercent(percent)}
+          <Typography component="div" variant="h6">
+            {points > 0 && '+'}
+            {points}
           </Typography>
         </Stack>
 
-        <Typography variant="h3">{fNumber(total)}</Typography>
+        <Typography variant="body2" sx={{ fontSize: '0.8rem', mt: 2 }}>
+          since joining
+        </Typography>
       </Box>
 
       <Chart type="bar" series={[{ data: series }]} options={chartOptions} width={60} height={36} />
@@ -94,10 +95,10 @@ export default function AppWidgetSummary({ title, percent, total, chart, sx, ...
   );
 }
 
+
 AppWidgetSummary.propTypes = {
   chart: PropTypes.object,
-  percent: PropTypes.number,
+  points: PropTypes.number,
   sx: PropTypes.object,
   title: PropTypes.string,
-  total: PropTypes.number,
 };
