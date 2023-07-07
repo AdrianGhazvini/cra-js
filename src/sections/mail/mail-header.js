@@ -37,7 +37,12 @@ export default function MailHeader({ onOpenNav, onOpenMail, ...other }) {
         label="Dispute Reason"
         placeholder="Pick your dispute reason."
         InputLabelProps={{ shrink: true }}
-        style={{ backgroundColor: 'white' }}
+        sx={{
+          backgroundColor: 'white',
+          borderRadius: '12px',
+          border: 'none',
+          boxShadow: 'none', 
+        }}
       >
         <MenuItem value="" disabled>
           Pick your dispute reason.

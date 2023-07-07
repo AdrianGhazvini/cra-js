@@ -1,11 +1,7 @@
 import PropTypes from 'prop-types';
 // @mui
-import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
-
-// components
-import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
 
