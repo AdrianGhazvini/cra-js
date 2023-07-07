@@ -36,7 +36,7 @@ import FileManagerFileDetails from './file-manager-file-details';
 export default function FileManagerTableRow({ row, selected, onSelectRow, onDeleteRow }) {
   const theme = useTheme();
 
-  const { name, size, type, modifiedAt, shared, isFavorited } = row;
+  const { name, size, modifiedAt, isFavorited } = row;
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -91,6 +91,7 @@ export default function FileManagerTableRow({ row, selected, onSelectRow, onDele
         selected={selected}
         sx={{
           borderRadius: 2,
+          flexGrow: 1,
           [`&.${tableRowClasses.selected}, &:hover`]: {
             backgroundColor: 'background.paper',
             boxShadow: theme.customShadows.z20,
@@ -121,9 +122,6 @@ export default function FileManagerTableRow({ row, selected, onSelectRow, onDele
         </TableCell>
 
         <TableCell onClick={handleClick}>
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <FileThumbnail file={type} sx={{ width: 36, height: 36 }} />
-
             <Typography
               noWrap
               variant="inherit"
@@ -135,15 +133,10 @@ export default function FileManagerTableRow({ row, selected, onSelectRow, onDele
             >
               {name}
             </Typography>
-          </Stack>
         </TableCell>
 
         <TableCell onClick={handleClick} sx={{ whiteSpace: 'nowrap' }}>
           {fData(size)}
-        </TableCell>
-
-        <TableCell onClick={handleClick} sx={{ whiteSpace: 'nowrap' }}>
-          {type}
         </TableCell>
 
         <TableCell onClick={handleClick} sx={{ whiteSpace: 'nowrap' }}>
@@ -158,89 +151,7 @@ export default function FileManagerTableRow({ row, selected, onSelectRow, onDele
             }}
           />
         </TableCell>
-
-        <TableCell align="right" onClick={handleClick}>
-          <AvatarGroup
-            max={4}
-            sx={{
-              display: 'inline-flex',
-              [`& .${avatarGroupClasses.avatar}`]: {
-                width: 24,
-                height: 24,
-                '&:first-of-type': {
-                  fontSize: 12,
-                },
-              },
-            }}
-          >
-            {shared &&
-              shared.map((person) => (
-                <Avatar key={person.id} alt={person.name} src={person.avatarUrl} />
-              ))}
-          </AvatarGroup>
-        </TableCell>
-
-        <TableCell
-          align="right"
-          sx={{
-            px: 1,
-            whiteSpace: 'nowrap',
-          }}
-        >
-          <Checkbox
-            color="warning"
-            icon={<Iconify icon="eva:star-outline" />}
-            checkedIcon={<Iconify icon="eva:star-fill" />}
-            checked={favorite.value}
-            onChange={favorite.onToggle}
-            sx={{ p: 0.75 }}
-          />
-
-          <IconButton color={popover.open ? 'inherit' : 'default'} onClick={popover.onOpen}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </TableCell>
       </TableRow>
-
-      <CustomPopover
-        open={popover.open}
-        onClose={popover.onClose}
-        arrow="right-top"
-        sx={{ width: 160 }}
-      >
-        <MenuItem
-          onClick={() => {
-            popover.onClose();
-            handleCopy();
-          }}
-        >
-          <Iconify icon="eva:link-2-fill" />
-          Copy Link
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
-            popover.onClose();
-            share.onTrue();
-          }}
-        >
-          <Iconify icon="solar:share-bold" />
-          Share
-        </MenuItem>
-
-        <Divider sx={{ borderStyle: 'dashed' }} />
-
-        <MenuItem
-          onClick={() => {
-            confirm.onTrue();
-            popover.onClose();
-          }}
-          sx={{ color: 'error.main' }}
-        >
-          <Iconify icon="solar:trash-bin-trash-bold" />
-          Delete
-        </MenuItem>
-      </CustomPopover>
 
       <FileManagerFileDetails
         item={row}
@@ -254,7 +165,6 @@ export default function FileManagerTableRow({ row, selected, onSelectRow, onDele
 
       <FileManagerShareDialog
         open={share.value}
-        shared={shared}
         inviteEmail={inviteEmail}
         onChangeInvite={handleChangeInvite}
         onCopyLink={handleCopy}

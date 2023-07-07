@@ -14,6 +14,8 @@ export default function Editor({
   error,
   simple = false,
   helperText,
+  value,
+  name,
   sx,
   ...other
 }) {
@@ -32,6 +34,8 @@ export default function Editor({
     },
   };
 
+  const populatedValue = value.replaceAll('<first_name>', name);
+
   return (
     <>
       <StyledEditor
@@ -48,9 +52,10 @@ export default function Editor({
         <Toolbar id={id} isSimple={simple} />
 
         <ReactQuill
-          modules={modules}
+          value={populatedValue}
+          modules={modules}s
           formats={formats}
-          placeholder="Write something awesome..."
+          placeholder="Your dispute letter will be generated here..."
           {...other}
         />
       </StyledEditor>
@@ -65,4 +70,6 @@ Editor.propTypes = {
   id: PropTypes.string,
   simple: PropTypes.bool,
   sx: PropTypes.object,
+  value: PropTypes.string,
+  name: PropTypes.string,
 };

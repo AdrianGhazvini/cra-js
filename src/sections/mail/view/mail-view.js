@@ -4,6 +4,7 @@ import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 // hooks
+import { useMockedUser } from 'src/hooks/use-mocked-user';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useResponsive } from 'src/hooks/use-responsive';
 // routes
@@ -29,6 +30,8 @@ const LABEL_INDEX = 'inbox';
 
 export default function MailView() {
   const router = useRouter();
+
+  const { user } = useMockedUser();
 
   const searchParams = useSearchParams();
 
@@ -178,6 +181,7 @@ export default function MailView() {
               <Editor
                 id="reply-mail"
                 value={disputeLetter}
+                name={user?.displayName}
               />
           </Stack>
         </Stack>

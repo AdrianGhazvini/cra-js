@@ -19,6 +19,7 @@ export default function MailNavMenu({ onOpenNav }) {
                 borderRadius: 1.5,
                 bgcolor: 'background.default',
                 p: 2,
+                pl: 3,
             }}
         >
             <Typography

@@ -27,10 +27,7 @@ import FileManagerTableRow from './file-manager-table-row';
 const TABLE_HEAD = [
   { id: 'name', label: 'Name' },
   { id: 'size', label: 'Size', width: 120 },
-  { id: 'type', label: 'Type', width: 120 },
   { id: 'modifiedAt', label: 'Modified', width: 140 },
-  { id: 'shared', label: 'Shared', align: 'right', width: 140 },
-  { id: '', width: 88 },
 ];
 
 // ----------------------------------------------------------------------
@@ -111,14 +108,17 @@ export default function FileManagerTable({
         <TableContainer
           sx={{
             p: theme.spacing(0, 3, 3, 3),
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100vh',
           }}
         >
           <Table
             size={dense ? 'small' : 'medium'}
             sx={{
-              minWidth: 960,
               borderCollapse: 'separate',
               borderSpacing: '0 16px',
+              flexGrow: 1,
             }}
           >
             <TableHeadCustom
@@ -135,6 +135,7 @@ export default function FileManagerTable({
                 )
               }
               sx={{
+                flexGrow: 1,
                 [`& .${tableCellClasses.head}`]: {
                   '&:first-of-type': {
                     borderTopLeftRadius: 12,

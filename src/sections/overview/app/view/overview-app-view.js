@@ -1,6 +1,5 @@
 // @mui
 import { useTheme } from '@mui/material/styles';
-import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -15,15 +14,10 @@ import { SeoIllustration } from 'src/assets/illustrations';
 
 import { Link } from 'react-router-dom';
 import CircularProgressWithLabel from './circular-progress-with-label';
-import AppWidget from '../app-widget';
 import AppWelcome from '../app-welcome';
-import AppFeatured from '../app-featured';
-import AppNewInvoice from '../app-new-invoice';
-import AppTopAuthors from '../app-top-authors';
-import AppTopRelated from '../app-top-related';
 import AppAreaInstalled from '../app-area-installed';
 import AppWidgetSummary from '../app-widget-summary';
-import AppTopInstalledCountries from '../app-top-installed-countries';
+
 
 
 

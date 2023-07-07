@@ -22,7 +22,6 @@ import { useTable, getComparator } from 'src/components/table';
 //
 import FileManagerTable from '../file-manager-table';
 import FileManagerFilters from '../file-manager-filters';
-import FileManagerGridView from '../file-manager-grid-view';
 import FileManagerFiltersResult from '../file-manager-filters-result';
 import FileManagerNewFolderDialog from '../file-manager-new-folder-dialog';
 
@@ -135,16 +134,6 @@ export default function FileManagerView() {
         dateError={dateError}
         typeOptions={FILE_TYPE_OPTIONS}
       />
-
-      <ToggleButtonGroup size="small" value={view} exclusive onChange={handleChangeView}>
-        <ToggleButton value="list">
-          <Iconify icon="solar:list-bold" />
-        </ToggleButton>
-
-        <ToggleButton value="grid">
-          <Iconify icon="mingcute:dot-grid-fill" />
-        </ToggleButton>
-      </ToggleButtonGroup>
     </Stack>
   );
 
@@ -164,7 +153,7 @@ export default function FileManagerView() {
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Typography variant="h4">Documents</Typography>
+          <Typography variant="h4">File Manager</Typography>
           <Button
             variant="contained"
             startIcon={<Iconify icon="eva:cloud-upload-fill" />}
@@ -195,24 +184,14 @@ export default function FileManagerView() {
           />
         ) : (
           <>
-            {view === 'list' ? (
-              <FileManagerTable
-                table={table}
-                tableData={tableData}
-                dataFiltered={dataFiltered}
-                onDeleteRow={handleDeleteItem}
-                notFound={notFound}
-                onOpenConfirm={confirm.onTrue}
-              />
-            ) : (
-              <FileManagerGridView
-                table={table}
-                data={tableData}
-                dataFiltered={dataFiltered}
-                onDeleteItem={handleDeleteItem}
-                onOpenConfirm={confirm.onTrue}
-              />
-            )}
+            <FileManagerTable
+              table={table}
+              tableData={tableData}
+              dataFiltered={dataFiltered}
+              onDeleteRow={handleDeleteItem}
+              notFound={notFound}
+              onOpenConfirm={confirm.onTrue}
+            />
           </>
         )}
       </Container>
