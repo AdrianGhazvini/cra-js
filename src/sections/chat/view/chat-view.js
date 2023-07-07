@@ -110,7 +110,7 @@ export default function ChatView() {
           mb: { xs: 3, md: 5 },
         }}
       >
-        Chat
+        Support
       </Typography>
 
       <Stack component={Card} direction="row" sx={{ height: '72vh' }}>

@@ -16,7 +16,6 @@ import EmptyContent from 'src/components/empty-content';
 import { LoadingScreen } from 'src/components/loading-screen';
 import { useSettingsContext } from 'src/components/settings';
 //
-import MailNav from '../mail-nav';
 import MailList from '../mail-list';
 import MailHeader from '../mail-header';
 import MailCompose from '../mail-compose';
@@ -47,7 +46,8 @@ export default function MailView() {
 
   const { labels, labelsLoading } = useGetLabels();
 
-  const { mails, mailsLoading, mailsError, mailsEmpty } = useGetMails(selectedLabelId);
+  const { mails, mailsLoading, mailsError } = useGetMails(selectedLabelId);
+  const mailsEmpty = mails.length === 0;
 
   const { mail, mailLoading, mailError } = useGetMail(selectedMailId);
 
@@ -135,20 +135,6 @@ export default function MailView() {
     />
   );
 
-  const renderMailNav = (
-    <MailNav
-      loading={labelsLoading}
-      openNav={openNav.value}
-      onCloseNav={openNav.onFalse}
-      //
-      labels={labels}
-      selectedLabelId={selectedLabelId}
-      handleClickLabel={handleClickLabel}
-      //
-      onToggleCompose={handleToggleCompose}
-    />
-  );
-
   const renderMailList = (
     <MailList
       mails={mails}
@@ -194,7 +180,7 @@ export default function MailView() {
             mb: { xs: 3, md: 5 },
           }}
         >
-          Mail
+          Create Dispute Letters
         </Typography>
 
         <Stack
@@ -207,12 +193,11 @@ export default function MailView() {
             bgcolor: 'background.neutral',
           }}
         >
-          {!upMd && (
             <MailHeader
               onOpenNav={openNav.onTrue}
               onOpenMail={mailsEmpty ? null : openMail.onTrue}
             />
-          )}
+          
 
           <Stack
             spacing={1}
@@ -224,7 +209,6 @@ export default function MailView() {
               },
             }}
           >
-            {renderMailNav}
 
             {mailsEmpty ? renderEmpty : renderMailList}
 

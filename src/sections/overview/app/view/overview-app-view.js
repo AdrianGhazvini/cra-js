@@ -39,7 +39,7 @@ export default function OverviewAppView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Grid container spacing={3}>
-        <Grid xs={12} md={8}>
+        <Grid xs={12} md={12}>
           <AppWelcome
             title={`Welcome back 👋 \n ${user?.firstName}`}
             description="Stay a step ahead with real-time credit score updates."
@@ -47,15 +47,11 @@ export default function OverviewAppView() {
             action={
               <Link to="/dashboard/analytics" style={{ textDecoration: 'none' }}>
                 <Button variant="contained" color="primary">
-                  Go Now
+                  View Credit Report
                 </Button>
               </Link>
             }
           />
-        </Grid>
-
-        <Grid xs={12} md={4}>
-          <AppFeatured list={_appFeatured} />
         </Grid>
 
         <Grid xs={12} md={4}>
@@ -102,7 +98,7 @@ export default function OverviewAppView() {
           />
         </Grid>
 
-        <Grid xs={12} md={6} lg={8}>
+        <Grid xs={12} md={12} lg={12}>
           <AppAreaInstalled
             title="Credit History"
             subheader="43% higher than last year"
@@ -126,8 +122,16 @@ export default function OverviewAppView() {
                   year: '2019',
                   data: [
                     {
-                      name: 'America',
-                      data: [450, 470, 510, 560, 650, 530, 480, 530, 580, 620, 670, 710],
+                      "name": "TransUnion",
+                      "data": [540, 560, 580, 610, 590, 570, 560, 580, 600, 620, 640, 660]
+                    },
+                    {
+                      "name": "Equifax",
+                      "data": [550, 570, 595, 615, 595, 575, 580, 600, 620, 640, 660, 680]
+                    },
+                    {
+                      "name": "Experian",
+                      "data": [560, 580, 600, 620, 600, 580, 590, 610, 630, 650, 670, 690]
                     },
                   ],
                 },

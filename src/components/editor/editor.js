@@ -54,7 +54,6 @@ export default function Editor({
           {...other}
         />
       </StyledEditor>
-
       {helperText && helperText}
     </>
   );

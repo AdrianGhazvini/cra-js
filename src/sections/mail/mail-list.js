@@ -11,14 +11,14 @@ import { useResponsive } from 'src/hooks/use-responsive';
 import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 //
+import { fetcher, endpoints } from 'src/utils/axios';
+import { useState, useEffect } from 'react';
 import MailItem from './mail-item';
-import { MailItemSkeleton } from './mail-skeleton';
+
 
 // ----------------------------------------------------------------------
 
 export default function MailList({
-  loading,
-  mails,
   //
   openMail,
   onCloseMail,
@@ -27,25 +27,28 @@ export default function MailList({
   selectedLabelId,
   selectedMailId,
 }) {
+  const [mails, setMails] = useState([]);
   const mdUp = useResponsive('up', 'md');
 
-  const renderSkeleton = (
-    <>
-      {[...Array(8)].map((_, index) => (
-        <MailItemSkeleton key={index} />
-      ))}
-    </>
-  );
+  useEffect(() => {
+    fetcher(endpoints.mail.list)
+      .then(data => {
+        setMails(data.labels);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }, []);
 
   const renderList = (
     <>
-      {mails.allIds.map((mailId) => (
+      {mails.map((mail, index) => (
         <MailItem
-          key={mailId}
-          mail={mails.byId[mailId]}
-          selected={selectedMailId === mailId}
+          key={index}
+          mail={{ message: mail, isUnread: false }}
+          selected={selectedMailId === index}
           onClickMail={() => {
-            onClickMail(mailId);
+            onClickMail(index);
           }}
         />
       ))}
@@ -54,29 +57,8 @@ export default function MailList({
 
   const renderContent = (
     <>
-      <Stack sx={{ p: 2 }}>
-        {mdUp ? (
-          <TextField
-            placeholder="Search..."
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
-                </InputAdornment>
-              ),
-            }}
-          />
-        ) : (
-          <Typography variant="h6" sx={{ textTransform: 'capitalize' }}>
-            {selectedLabelId}
-          </Typography>
-        )}
-      </Stack>
-
-      <Scrollbar sx={{ px: 2 }}>
-        {loading && renderSkeleton}
-
-        {!!mails.allIds.length && renderList}
+      <Scrollbar sx={{ px: 2, py: 2 }}>
+        {mails.length > 0 && renderList}
       </Scrollbar>
     </>
   );
@@ -111,8 +93,6 @@ export default function MailList({
 }
 
 MailList.propTypes = {
-  loading: PropTypes.bool,
-  mails: PropTypes.object,
   onClickMail: PropTypes.func,
   onCloseMail: PropTypes.func,
   openMail: PropTypes.bool,

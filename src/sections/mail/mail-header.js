@@ -1,42 +1,54 @@
-import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
 // @mui
-import TextField from '@mui/material/TextField';
-import IconButton from '@mui/material/IconButton';
-import Stack from '@mui/material/Stack';
-import InputAdornment from '@mui/material/InputAdornment';
+import MenuItem from '@mui/material/MenuItem';
 // components
-import Iconify from 'src/components/iconify';
+import PropTypes from 'prop-types';
+import { RHFSelect } from 'src/components/hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
+import { fetcher, endpoints } from 'src/utils/axios';
 
 // ----------------------------------------------------------------------
 
 export default function MailHeader({ onOpenNav, onOpenMail, ...other }) {
+  const methods = useForm();
+  const [disputeReasons, setDisputeReasons] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await fetcher(endpoints.mail.details);
+        if (Array.isArray(result.details)) {
+          setDisputeReasons(result.details);
+        } else {
+          console.error('Received data is not an array:', result.details);
+        }
+      } catch (error) {
+        console.error('Failed to fetch dispute reasons:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
-    <Stack spacing={2} direction="row" alignItems="center" sx={{ py: 1 }} {...other}>
-      <Stack direction="row" alignItems="center">
-        <IconButton onClick={onOpenNav}>
-          <Iconify icon="fluent:mail-24-filled" />
-        </IconButton>
-
-        {onOpenMail && (
-          <IconButton onClick={onOpenMail}>
-            <Iconify icon="solar:chat-round-dots-bold" />
-          </IconButton>
-        )}
-      </Stack>
-
-      <TextField
+    <FormProvider {...methods}>
+      <RHFSelect
         fullWidth
-        size="small"
-        placeholder="Search..."
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
-            </InputAdornment>
-          ),
-        }}
-      />
-    </Stack>
+        name="status"
+        label="Dispute Reason"
+        placeholder="Pick your dispute reason."
+        InputLabelProps={{ shrink: true }}
+        style={{ backgroundColor: 'white' }}
+      >
+        <MenuItem value="" disabled>
+          Pick your dispute reason.
+        </MenuItem>
+        {disputeReasons.map((option) => (
+          <MenuItem key={option} value={option} style={{ whiteSpace: 'normal' }}>
+            {option}
+          </MenuItem>
+        ))}
+      </RHFSelect>
+    </FormProvider>
   );
 }
 

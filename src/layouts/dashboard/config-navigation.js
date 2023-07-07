@@ -53,7 +53,6 @@ export function useNavData() {
   const data = useMemo(
     () => [
       {
-        subheader: t('overview'),
         items: [
           { title: t('app'), path: paths.dashboard.root, icon: ICONS.dashboard },
           { title: t('analytics'), path: paths.dashboard.general.analytics, icon: ICONS.analytics },
@@ -67,7 +66,6 @@ export function useNavData() {
             title: t('mail'),
             path: paths.dashboard.mail,
             icon: ICONS.mail,
-            info: <Label color="error">+32</Label>,
           },
           {
             title: t('chat'),

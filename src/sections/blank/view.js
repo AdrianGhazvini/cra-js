@@ -13,7 +13,7 @@ export default function BlankView() {
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
-      <Typography variant="h4"> Blank </Typography>
+      <Typography variant="h4"> Billing </Typography>
 
       <Box
         sx={{

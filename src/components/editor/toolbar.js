@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { StyledEditorToolbar } from './styles';
+import { StyledEditorToolbar } from 'src/components/editor/styles';
 
 // ----------------------------------------------------------------------
 

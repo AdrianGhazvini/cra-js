@@ -47,15 +47,6 @@ export default function MailNavItem({ selected, label, onClickNavItem, ...other 
       }}
       {...other}
     >
-      <Iconify
-        icon={labelIcon}
-        width={22}
-        sx={{
-          mr: 2,
-          color,
-        }}
-      />
-
       <ListItemText
         primary={name}
         primaryTypographyProps={{
@@ -63,8 +54,6 @@ export default function MailNavItem({ selected, label, onClickNavItem, ...other 
           typography: selected ? 'subtitle2' : 'body2',
         }}
       />
-
-      {!!unreadCount && <Typography variant="caption">{unreadCount}</Typography>}
     </ListItemButton>
   );
 }

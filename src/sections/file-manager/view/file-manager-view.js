@@ -164,7 +164,7 @@ export default function FileManagerView() {
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Typography variant="h4">File Manager</Typography>
+          <Typography variant="h4">Documents</Typography>
           <Button
             variant="contained"
             startIcon={<Iconify icon="eva:cloud-upload-fill" />}

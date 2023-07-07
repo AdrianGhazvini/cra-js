@@ -35,7 +35,7 @@ export default function OverviewAnalyticsView() {
           mb: { xs: 3, md: 5 },
         }}
       >
-        Hi, Welcome back 👋
+        Credit Report
       </Typography>
 
       <Grid container spacing={3}>

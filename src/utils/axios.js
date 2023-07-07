@@ -55,9 +55,9 @@ export const endpoints = {
     register: 'http://localhost:8000/signup/',
   },
   mail: {
-    list: '/api/mail/list',
-    details: '/api/mail/details',
-    labels: '/api/mail/labels',
+    list: 'http://localhost:8000/api/content/credit-check-item/',
+    details: 'http://localhost:8000/api/content/dispute-reason-item/',
+    labels: 'http://localhost:8000/api/content/email-template-item/',
   },
   post: {
     list: '/api/post/list',

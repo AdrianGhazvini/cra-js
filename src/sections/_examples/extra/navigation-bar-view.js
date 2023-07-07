@@ -304,7 +304,6 @@ const NAV_ITEMS = [
         title: 'Case Studies',
         path: '#',
         icon: <Iconify icon="carbon:3d-cursor-alt" width={1} />,
-        info: <Label color="error">+32</Label>,
         children: [
           { title: 'Case Studies', path: '#' },
           { title: 'Case Study', path: '#' },

@@ -5,6 +5,7 @@ import Stack from '@mui/material/Stack';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
 // theme
 import { bgBlur } from 'src/theme/css';
 // hooks
@@ -17,7 +18,6 @@ import { useSettingsContext } from 'src/components/settings';
 //
 import { HEADER, NAV } from '../config-layout';
 import {
-  Searchbar,
   AccountPopover,
   SettingsButton,
   LanguagePopover,
@@ -49,9 +49,6 @@ export default function Header({ onOpenNav }) {
           <SvgColor src="/assets/icons/navbar/ic_menu_item.svg" />
         </IconButton>
       )}
-
-      <Searchbar />
-
       <Stack
         flexGrow={1}
         direction="row"

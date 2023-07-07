@@ -5,14 +5,17 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
-import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import FormHelperText from '@mui/material/FormHelperText';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
+import InputLabel from '@mui/material/InputLabel';
+import InputAdornment from '@mui/material/InputAdornment';
+
 
 // ----------------------------------------------------------------------
+
 
 export function RHFSelect({
   name,
@@ -21,6 +24,7 @@ export function RHFSelect({
   helperText,
   children,
   PaperPropsSx,
+  placeholder,
   ...other
 }) {
   const { control } = useFormContext();
@@ -34,6 +38,13 @@ export function RHFSelect({
           {...field}
           select
           fullWidth
+          InputProps={{
+            startAdornment: field.value ? null : (
+              <InputAdornment position="start" style={{ color: 'gray' }}>
+                {placeholder}
+              </InputAdornment>
+            ),
+          }}
           SelectProps={{
             native,
             MenuProps: {
@@ -66,7 +77,10 @@ RHFSelect.propTypes = {
   maxHeight: PropTypes.number,
   name: PropTypes.string,
   native: PropTypes.bool,
+  placeholder: PropTypes.string,
 };
+
+
 
 // ----------------------------------------------------------------------
 
@@ -121,7 +135,7 @@ export function RHFMultiSelect({
             displayEmpty={!!placeholder}
             labelId={name}
             input={<OutlinedInput fullWidth label={label} error={!!error} />}
-            renderValue={renderValues}
+            renderValue={selected => renderValues(selected || [])} // add default value here
             {...other}
           >
             {placeholder && (
