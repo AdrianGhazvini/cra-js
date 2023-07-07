@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 // @mui
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
@@ -16,11 +16,12 @@ import EmptyContent from 'src/components/empty-content';
 import { LoadingScreen } from 'src/components/loading-screen';
 import { useSettingsContext } from 'src/components/settings';
 //
+import Editor from 'src/components/editor';
 import MailList from '../mail-list';
-import MailNavMenu from '../mail-nav-menu';
 import MailHeader from '../mail-header';
 import MailCompose from '../mail-compose';
 import MailDetails from '../mail-details';
+
 
 // ----------------------------------------------------------------------
 
@@ -36,6 +37,8 @@ export default function MailView() {
   const selectedMailId = searchParams.get('id') || '';
 
   const upMd = useResponsive('up', 'md');
+
+  const [letter, setLetter] = useState("");
 
   const settings = useSettingsContext();
 
@@ -54,29 +57,7 @@ export default function MailView() {
 
   const firstMailId = mails.allIds[0] || '';
 
-  const handleToggleCompose = useCallback(() => {
-    if (openNav.value) {
-      openNav.onFalse();
-    }
-    openCompose.onToggle();
-  }, [openCompose, openNav]);
-
-  const handleClickLabel = useCallback(
-    (labelId) => {
-      if (!upMd) {
-        openNav.onFalse();
-      }
-
-      if (labelId) {
-        const href =
-          labelId !== LABEL_INDEX
-            ? `${paths.dashboard.mail}?label=${labelId}`
-            : paths.dashboard.mail;
-        router.push(href);
-      }
-    },
-    [openNav, router, upMd]
-  );
+  const [disputeLetter, setDisputeLetter] = useState("");
 
   const handleClickMail = useCallback(
     (mailId) => {
@@ -150,28 +131,6 @@ export default function MailView() {
     />
   );
 
-  const renderMailDetails = (
-    <>
-      {mailsEmpty ? (
-        <EmptyContent
-          imgUrl="/assets/icons/empty/ic_email_disabled.svg"
-          sx={{
-            borderRadius: 1.5,
-            bgcolor: 'background.default',
-            ...(!upMd && {
-              display: 'none',
-            }),
-          }}
-        />
-      ) : (
-        <MailDetails
-          mail={mail}
-          renderLabel={(id) => labels.filter((label) => label.id === id)[0]}
-        />
-      )}
-    </>
-  );
-
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
@@ -199,10 +158,10 @@ export default function MailView() {
               direction="row"
               flexGrow={1}
           >
-            <MailNavMenu onOpenNav={openNav.onTrue} />
             <MailHeader
               onOpenNav={openNav.onTrue}
               onOpenMail={mailsEmpty ? null : openMail.onTrue}
+              setDisputeLetter={setDisputeLetter}
             />
           </Stack>
   
@@ -216,10 +175,10 @@ export default function MailView() {
                 },
               }}
             >
-
-              {mailsEmpty ? renderEmpty : renderMailList}
-
-              {mailLoading ? renderLoading : renderMailDetails}
+              <Editor
+                id="reply-mail"
+                value={disputeLetter}
+              />
           </Stack>
         </Stack>
       </Container>
