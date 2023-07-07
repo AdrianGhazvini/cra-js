@@ -1,3 +1,6 @@
 
 # 2023-07-06 21:33:12.630711
 +in this repo in my mail-view.js file located at src/sections/mail/view/mail-view.js the background of the main parent component is   bgcolor: 'background.neutral' but it's only this color on smaller screens like mobile and ipad, when the screen is larger like on desktop the background is white, why is this hapeening? could it be because of some style settings in teh child components?
+
+# 2023-07-06 21:42:39.608007
++can you change the src/sections/mail/view/mail-view.js to have background.neutral for all screen sizes?
