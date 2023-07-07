@@ -17,6 +17,7 @@ import { LoadingScreen } from 'src/components/loading-screen';
 import { useSettingsContext } from 'src/components/settings';
 //
 import MailList from '../mail-list';
+import MailNavMenu from '../mail-nav-menu';
 import MailHeader from '../mail-header';
 import MailCompose from '../mail-compose';
 import MailDetails from '../mail-details';
@@ -190,29 +191,35 @@ export default function MailView() {
             borderRadius: 2,
             position: 'relative',
             overflow: 'hidden',
-            bgcolor: 'background.neutral',
+            bgcolor: '#F4F6F8',
           }}
         >
+          <Stack
+              spacing={1}
+              direction="row"
+              flexGrow={1}
+          >
+            <MailNavMenu onOpenNav={openNav.onTrue} />
             <MailHeader
               onOpenNav={openNav.onTrue}
               onOpenMail={mailsEmpty ? null : openMail.onTrue}
             />
-          
+          </Stack>
+  
+            <Stack
+              spacing={1}
+              direction="row"
+              flexGrow={1}
+              sx={{
+                height: {
+                  xs: '72vh',
+                },
+              }}
+            >
 
-          <Stack
-            spacing={1}
-            direction="row"
-            flexGrow={1}
-            sx={{
-              height: {
-                xs: '72vh',
-              },
-            }}
-          >
+              {mailsEmpty ? renderEmpty : renderMailList}
 
-            {mailsEmpty ? renderEmpty : renderMailList}
-
-            {mailLoading ? renderLoading : renderMailDetails}
+              {mailLoading ? renderLoading : renderMailDetails}
           </Stack>
         </Stack>
       </Container>
