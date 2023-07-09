@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback , useRef } from 'react';
+import ReactQuill from 'react-quill';
 // @mui
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
@@ -16,6 +17,8 @@ import { useGetLabels, useGetMails, useGetMail } from 'src/api/mail';
 import EmptyContent from 'src/components/empty-content';
 import { LoadingScreen } from 'src/components/loading-screen';
 import { useSettingsContext } from 'src/components/settings';
+// axios
+import { getUserImages } from 'src/utils/axios';
 //
 import Editor from 'src/components/editor';
 import MailList from '../mail-list';
@@ -51,6 +54,8 @@ export default function MailView() {
 
   const openCompose = useBoolean();
 
+  const quillRef = useRef(null);
+
   const { labels, labelsLoading } = useGetLabels();
 
   const { mails, mailsLoading, mailsError } = useGetMails(selectedLabelId);
@@ -61,6 +66,9 @@ export default function MailView() {
   const firstMailId = mails.allIds[0] || '';
 
   const [disputeLetter, setDisputeLetter] = useState("");
+
+  const [driversLicenseUrl, setDriversLicenseUrl] = useState("");
+  const [utilityBillUrl, setUtilityBillUrl] = useState("");
 
   const handleClickMail = useCallback(
     (mailId) => {
@@ -77,6 +85,26 @@ export default function MailView() {
     },
     [openMail, router, selectedLabelId, upMd]
   );
+
+  const fetchUserImages = useCallback(async () => {
+    try {
+      const userId = user?.id;
+      const images = await getUserImages(userId);
+      if (images.drivers_license && images.utility_bill) {
+        setDriversLicenseUrl(`http://localhost:8000${images.drivers_license}`);
+        setUtilityBillUrl(`http://localhost:8000${images.utility_bill}`);
+      } else {
+        console.error('User images not found');
+      }
+    } catch (error) {
+      console.error('Failed to fetch user images:', error);
+    }
+  }, [user?.id]); 
+
+  useEffect(() => {
+    fetchUserImages();
+  }, [fetchUserImages]);
+
 
   useEffect(() => {
     if (mailsError || mailError) {
@@ -134,6 +162,21 @@ export default function MailView() {
     />
   );
 
+  const toDataURL = (url, callback) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        callback(reader.result);
+      }
+      reader.readAsDataURL(xhr.response);
+    };
+    xhr.open('GET', url);
+    xhr.responseType = 'blob';
+    xhr.send();
+  }
+
+
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'xl'}>
@@ -164,10 +207,24 @@ export default function MailView() {
             <MailHeader
               onOpenNav={openNav.onTrue}
               onOpenMail={mailsEmpty ? null : openMail.onTrue}
-              setDisputeLetter={setDisputeLetter}
+              setDisputeLetter={(newDisputeLetter) => {
+                setDisputeLetter(newDisputeLetter);
+                if (quillRef.current) {
+                  const editor = quillRef.current.getEditor();
+                  const index = editor.getLength(); // Get the current length of the editor content
+
+                  toDataURL(driversLicenseUrl, (dataUrl) => {
+                    editor.insertEmbed(index, 'image', dataUrl); // Insert the image at the end of the editor
+                  });
+
+                  toDataURL(utilityBillUrl, (dataUrl) => {
+                    editor.insertEmbed(index + 1, 'image', dataUrl); // Insert the next image at the end of the editor
+                  });
+                }
+              }}
             />
+
           </Stack>
-  
             <Stack
               spacing={1}
               direction="row"
@@ -176,12 +233,15 @@ export default function MailView() {
                 height: {
                   xs: '72vh',
                 },
+                backgroundColor: 'white',
+                borderRadius: 1,
               }}
             >
               <Editor
                 id="reply-mail"
                 value={disputeLetter}
                 name={user?.displayName}
+                quillRef={quillRef}
               />
           </Stack>
         </Stack>
