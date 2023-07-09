@@ -8,9 +8,13 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Dialog from '@mui/material/Dialog';
+// hooks
+import { useMockedUser } from 'src/hooks/use-mocked-user';
 // components
 import Iconify from 'src/components/iconify';
 import { Upload } from 'src/components/upload';
+// axios
+import axios from 'axios';
 
 // ----------------------------------------------------------------------
 
@@ -18,12 +22,14 @@ export default function FileManagerNewFolderDialog({
   title = 'Upload Files',
   open,
   onClose,
+  fileType,
   //
   onCreate,
   onUpdate,
   //
   folderName,
   onChangeFolderName,
+  refreshImages,
   ...other
 }) {
   const [files, setFiles] = useState([]);
@@ -34,20 +40,56 @@ export default function FileManagerNewFolderDialog({
     }
   }, [open]);
 
-  const handleDrop = useCallback(
-    (acceptedFiles) => {
-      const newFiles = acceptedFiles.map((file) =>
-        Object.assign(file, {
-          preview: URL.createObjectURL(file),
-        })
-      );
+  function getButtonLabel() {
+    if (fileType === "drivers_license") {
+      return "Upload Driver's License";
+    } if (fileType === "utility_bill") {
+      return "Upload Utility Bill";
+    }
+    return "Upload";
+  }
 
-      setFiles([...files, ...newFiles]);
-    },
-    [files]
-  );
+  const handleDrop = useCallback((acceptedFiles) => {
+    const newFile = acceptedFiles.filter((file) => file.type.startsWith('image/'))[0];
+    if (newFile) {
+      const file = Object.assign(newFile, {
+        preview: URL.createObjectURL(newFile),
+      });
+
+      setFiles([file]);  // only keep the most recent file
+    }
+  }, []);
+
+
+  const { user } = useMockedUser();
 
   const handleUpload = () => {
+    const formData = new FormData();
+
+    if (files.length === 0) {
+      return; // Exit early if no files are selected
+    }
+
+    files.forEach((file, index) => {
+      formData.append(`file${index}`, file);
+    });
+    formData.append('user_id', user?.id );
+    formData.append('file_type', fileType);
+
+    axios
+      .post('http://localhost:8000/api/user-images/upload/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+        refreshImages();
+      })
+      .catch((error) => {
+        console.log(error.response.data);
+      });
+
     onClose();
     console.info('ON UPLOAD');
   };
@@ -76,7 +118,7 @@ export default function FileManagerNewFolderDialog({
           />
         )}
 
-        <Upload multiple files={files} onDrop={handleDrop} onRemove={handleRemoveFile} />
+        <Upload files={files} onDrop={handleDrop} onRemove={handleRemoveFile} />
       </DialogContent>
 
       <DialogActions>
@@ -84,8 +126,10 @@ export default function FileManagerNewFolderDialog({
           variant="contained"
           startIcon={<Iconify icon="eva:cloud-upload-fill" />}
           onClick={handleUpload}
+          color='primary'
+          disabled={files.length === 0}
         >
-          Upload
+          {getButtonLabel(fileType)}      
         </Button>
 
         {!!files.length && (
@@ -114,4 +158,6 @@ FileManagerNewFolderDialog.propTypes = {
   onUpdate: PropTypes.func,
   open: PropTypes.bool,
   title: PropTypes.string,
+  fileType: PropTypes.string,
+  refreshImages: PropTypes.func,
 };

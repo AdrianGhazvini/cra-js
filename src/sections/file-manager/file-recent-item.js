@@ -92,7 +92,6 @@ export default function FileRecentItem({ file, onDelete, sx, ...other }) {
           <Box
             sx={{ mx: 0.75, width: 2, height: 2, borderRadius: '50%', bgcolor: 'currentColor' }}
           />
-          {fDateTime(file.modifiedAt)}
         </>
       }
       primaryTypographyProps={{

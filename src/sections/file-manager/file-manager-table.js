@@ -16,7 +16,6 @@ import {
   TableNoData,
   TableEmptyRows,
   TableHeadCustom,
-  TableSelectedAction,
   TablePaginationCustom,
 } from 'src/components/table';
 //
@@ -26,8 +25,6 @@ import FileManagerTableRow from './file-manager-table-row';
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name' },
-  { id: 'size', label: 'Size', width: 120 },
-  { id: 'modifiedAt', label: 'Modified', width: 140 },
 ];
 
 // ----------------------------------------------------------------------
@@ -66,51 +63,15 @@ export default function FileManagerTable({
       <Box
         sx={{
           position: 'relative',
-          m: theme.spacing(-2, -3, -3, -3),
+          width: '100%',
         }}
       >
-        <TableSelectedAction
-          dense={dense}
-          numSelected={selected.length}
-          rowCount={tableData.length}
-          onSelectAllRows={(checked) =>
-            onSelectAllRows(
-              checked,
-              tableData.map((row) => row.id)
-            )
-          }
-          action={
-            <>
-              <Tooltip title="Share">
-                <IconButton color="primary">
-                  <Iconify icon="solar:share-bold" />
-                </IconButton>
-              </Tooltip>
-
-              <Tooltip title="Delete">
-                <IconButton color="primary" onClick={onOpenConfirm}>
-                  <Iconify icon="solar:trash-bin-trash-bold" />
-                </IconButton>
-              </Tooltip>
-            </>
-          }
-          sx={{
-            pl: 1,
-            pr: 2,
-            top: 16,
-            left: 24,
-            right: 24,
-            width: 'auto',
-            borderRadius: 1.5,
-          }}
-        />
-
         <TableContainer
           sx={{
-            p: theme.spacing(0, 3, 3, 3),
             display: 'flex',
             flexDirection: 'column',
-            height: '100vh',
+            height: '100rvh',
+            overflowY: 'hidden',
           }}
         >
           <Table
@@ -135,7 +96,7 @@ export default function FileManagerTable({
                 )
               }
               sx={{
-                flexGrow: 1,
+                width: '100%',
                 [`& .${tableCellClasses.head}`]: {
                   '&:first-of-type': {
                     borderTopLeftRadius: 12,
@@ -179,22 +140,6 @@ export default function FileManagerTable({
           </Table>
         </TableContainer>
       </Box>
-
-      <TablePaginationCustom
-        count={dataFiltered.length}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        onPageChange={onChangePage}
-        onRowsPerPageChange={onChangeRowsPerPage}
-        //
-        dense={dense}
-        onChangeDense={onChangeDense}
-        sx={{
-          [`& .${tablePaginationClasses.toolbar}`]: {
-            borderTopColor: 'transparent',
-          },
-        }}
-      />
     </>
   );
 }

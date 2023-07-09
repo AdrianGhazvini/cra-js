@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import { useFormContext, Controller } from 'react-hook-form';
 // @mui
-import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
@@ -12,16 +11,15 @@ import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
-
+import Box from '@mui/material/Box';
 
 // ----------------------------------------------------------------------
-
-
 export function RHFSelect({
   name,
   native,
   maxHeight = 220,
   helperText,
+  label,
   children,
   PaperPropsSx,
   placeholder,
@@ -38,12 +36,14 @@ export function RHFSelect({
           {...field}
           select
           fullWidth
+          label = {label}
           InputProps={{
             startAdornment: field.value ? null : (
               <InputAdornment position="start" style={{ color: 'gray' }}>
                 {placeholder}
               </InputAdornment>
             ),
+            style: { backgroundColor: 'white' }
           }}
           SelectProps={{
             native,
@@ -78,8 +78,8 @@ RHFSelect.propTypes = {
   name: PropTypes.string,
   native: PropTypes.bool,
   placeholder: PropTypes.string,
+  label: PropTypes.string,
 };
-
 
 
 // ----------------------------------------------------------------------

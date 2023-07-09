@@ -124,25 +124,11 @@ export function fileNameByUrl(fileUrl) {
 // ----------------------------------------------------------------------
 
 export function fileData(file) {
-  // Url
-  if (typeof file === 'string') {
-    return {
-      key: file,
-      preview: file,
-      name: fileNameByUrl(file),
-      type: fileTypeByUrl(file),
-    };
-  }
 
-  // File
-  return {
-    key: file.preview,
-    name: file.name,
-    size: file.size,
-    path: file.path,
-    type: file.type,
-    preview: file.preview,
-    lastModified: file.lastModified,
-    lastModifiedDate: file.lastModifiedDate,
-  };
+    return {
+      key: file.id,
+      preview: file.url,
+      name: file.name,
+      type: fileTypeByUrl(file.url),
+    };
 }

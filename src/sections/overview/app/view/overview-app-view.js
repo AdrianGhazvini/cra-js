@@ -2,7 +2,7 @@
 import { useTheme } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid';
 // hooks
 import { useMockedUser } from 'src/hooks/use-mocked-user';
 // _mock
@@ -25,7 +25,6 @@ import AppWidgetSummary from '../app-widget-summary';
 
 export default function OverviewAppView() {
   const { user } = useMockedUser();
-
   const theme = useTheme();
 
   const settings = useSettingsContext();

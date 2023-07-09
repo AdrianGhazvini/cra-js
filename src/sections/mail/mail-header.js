@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from 'react';
-// @mui
+import { useForm, FormProvider } from 'react-hook-form';
+import { RHFSelect } from 'src/components/hook-form';
+import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
-// components
-import PropTypes from 'prop-types';
-import { useForm , Controller } from 'react-hook-form';
-import Select from '@mui/material/Select';
-import { fetcher, endpoints } from 'src/utils/axios';
+// hooks
+import { useMockedUser } from 'src/hooks/use-mocked-user';
+// axios
+import { fetcher, endpoints, getUserImages } from 'src/utils/axios';
 
-// ----------------------------------------------------------------------
 
 export default function MailHeader({ onOpenNav, onOpenMail, setDisputeLetter, ...other }) {
   const methods = useForm();
+  const { watch } = methods;
   const [disputeItems, setDisputeItems] = useState([]);
   const [disputeReasons, setDisputeReasons] = useState([]);
-  const { control, watch } = useForm();
   const disputeItem = watch('disputeItem');
   const disputeReason = watch('disputeReason');
 
@@ -34,6 +33,26 @@ export default function MailHeader({ onOpenNav, onOpenMail, setDisputeLetter, ..
       console.error('Failed to fetch dispute letter:', error);
     }
   };
+
+  const { user } = useMockedUser();
+
+  useEffect(() => {
+    const fetchUserImages = async () => {
+      try {
+        const userId = user?.id;
+        const images = await getUserImages(userId);
+        if (images.drivers_license && images.utility_bill) {
+          console.log("Driver's License: ", `http://localhost:8000${images.drivers_license}`);
+          console.log("Utility Bill: ", `http://localhost:8000${images.utility_bill}`);
+        } else {
+          console.error('User images not found');
+        }
+      } catch (error) {
+        console.error('Failed to fetch user images:', error);
+      }
+    };
+    fetchUserImages();
+  }, [user?.id]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -68,58 +87,45 @@ export default function MailHeader({ onOpenNav, onOpenMail, setDisputeLetter, ..
   }, []);
 
   return (
-    <Stack direction="column" flexGrow={1} spacing={2}>
-      <Controller
-        name="disputeItem"
-        control={control}
-        defaultValue=""
-        render={({ field }) => (
-          <TextField
-            select
-            fullWidth
-            label="Dispute Item"
-            placeholder="Pick the item you want to dispute."
-            InputLabelProps={{ shrink: true }}
-            variant="outlined"
-            {...field}
-          >
-            {disputeItems.map((option) => (
-              <MenuItem key={option} value={option} style={{ whiteSpace: 'normal' }}>
-                {option}
-              </MenuItem>
-            ))}
-          </TextField>
-        )}
-      />
-      <Controller
-        name="disputeReason"
-        control={control}
-        defaultValue=""
-        render={({ field }) => (
-          <TextField
-            select
-            fullWidth
-            label="Dispute Reason"
-            placeholder="Pick your dispute reason."
-            InputLabelProps={{ shrink: true }}
-            variant="outlined"
-            {...field}
-          >
-            {disputeReasons.map((option) => (
-              <MenuItem key={option} value={option} style={{ whiteSpace: 'normal' }}>
-                {option}
-              </MenuItem>
-            ))}
-          </TextField>
-        )}
-      />
+    <FormProvider {...methods}>
+      <Stack direction="column" flexGrow={1} spacing={2}>
+        <RHFSelect
+          label="Dispute Item"
+          name="disputeItem"
+          placeholder="Pick the item you want to dispute."
+        >
+          {disputeItems.map((option) => (
+            <MenuItem key={option} value={option} style={{ whiteSpace: 'normal' }}>
+              {option}
+            </MenuItem>
+          ))}
+        </RHFSelect>
 
-      <Button variant="contained" color="primary" onClick={fetchLetters} disabled={!disputeItem || !disputeReason}>
-        Generate Dispute Letter
-      </Button>
-    </Stack>
+        <RHFSelect
+          label="Dispute Reason"
+          name="disputeReason"
+          placeholder="Pick your dispute reason."
+        >
+          {disputeReasons.map((option) => (
+            <MenuItem key={option} value={option} style={{ whiteSpace: 'normal' }}>
+              {option}
+            </MenuItem>
+          ))}
+        </RHFSelect>
+
+        <Button variant="contained" 
+        color="primary" 
+        onClick={fetchLetters} 
+        disabled={!disputeItem || !disputeReason}
+        style={{ minHeight: '50px' , marginBottom: '8px' }}
+        >
+          Generate Dispute Letter
+        </Button>
+      </Stack>
+    </FormProvider>
   );
 }
+
 MailHeader.propTypes = {
   onOpenMail: PropTypes.func,
   onOpenNav: PropTypes.func,

@@ -15,6 +15,10 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 // editor
 import 'react-quill/dist/quill.snow.css';
 
+// highlight.js
+import 'highlight.js/styles/default.css';
+import hljs from 'highlight.js';
+
 // slick-carousel
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -47,6 +51,8 @@ import { AuthProvider, AuthConsumer } from 'src/auth/context/jwt';
 // import { AuthProvider, AuthConsumer } from 'src/auth/context/firebase';
 
 // ----------------------------------------------------------------------
+
+window.hljs = hljs;
 
 export default function App() {
   const charAt = `

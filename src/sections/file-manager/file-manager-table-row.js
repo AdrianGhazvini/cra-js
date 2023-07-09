@@ -113,14 +113,6 @@ export default function FileManagerTableRow({ row, selected, onSelectRow, onDele
           }),
         }}
       >
-        <TableCell padding="checkbox">
-          <Checkbox
-            checked={selected}
-            onDoubleClick={() => console.info('ON DOUBLE CLICK')}
-            onClick={onSelectRow}
-          />
-        </TableCell>
-
         <TableCell onClick={handleClick}>
             <Typography
               noWrap
@@ -133,23 +125,6 @@ export default function FileManagerTableRow({ row, selected, onSelectRow, onDele
             >
               {name}
             </Typography>
-        </TableCell>
-
-        <TableCell onClick={handleClick} sx={{ whiteSpace: 'nowrap' }}>
-          {fData(size)}
-        </TableCell>
-
-        <TableCell onClick={handleClick} sx={{ whiteSpace: 'nowrap' }}>
-          <ListItemText
-            primary={format(new Date(modifiedAt), 'dd MMM yyyy')}
-            secondary={format(new Date(modifiedAt), 'p')}
-            primaryTypographyProps={{ typography: 'body2' }}
-            secondaryTypographyProps={{
-              mt: 0.5,
-              component: 'span',
-              typography: 'caption',
-            }}
-          />
         </TableCell>
       </TableRow>
 

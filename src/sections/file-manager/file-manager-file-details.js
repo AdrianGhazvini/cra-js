@@ -38,19 +38,13 @@ export default function FileManagerFileDetails({
   onDelete,
   ...other
 }) {
-  const { name, size, url, type, shared, modifiedAt } = item;
-
-  const hasShared = shared && !!shared.length;
-
-  const toggleTags = useBoolean(true);
+  const { name, size } = item;
 
   const share = useBoolean();
 
   const properties = useBoolean(true);
 
   const [inviteEmail, setInviteEmail] = useState('');
-
-  const [tags, setTags] = useState(item.tags.slice(0, 3));
 
   const handleChangeInvite = useCallback((event) => {
     setInviteEmail(event.target.value);
@@ -71,24 +65,6 @@ export default function FileManagerFileDetails({
           />
         </IconButton>
       </Stack>
-
-      {properties.value && (
-        <>
-          <Stack direction="row" sx={{ typography: 'caption', textTransform: 'capitalize' }}>
-            <Box component="span" sx={{ width: 80, color: 'text.secondary', mr: 2 }}>
-              Size
-            </Box>
-            {fData(size)}
-          </Stack>
-
-          <Stack direction="row" sx={{ typography: 'caption', textTransform: 'capitalize' }}>
-            <Box component="span" sx={{ width: 80, color: 'text.secondary', mr: 2 }}>
-              Modified
-            </Box>
-            {fDateTime(modifiedAt)}
-          </Stack>
-        </>
-      )}
     </Stack>
   );
 
@@ -109,6 +85,7 @@ export default function FileManagerFileDetails({
         <Scrollbar sx={{ height: 1 }}>
           <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ p: 2.5 }}>
             <Typography variant="h6"> Info </Typography>
+
           </Stack>
 
           <Stack
@@ -120,8 +97,8 @@ export default function FileManagerFileDetails({
             }}
           >
             <FileThumbnail
+              file={item}
               imageView
-              file={type === 'folder' ? type : url}
               sx={{ width: 64, height: 64 }}
               imgSx={{ borderRadius: 1 }}
             />
@@ -129,10 +106,6 @@ export default function FileManagerFileDetails({
             <Typography variant="subtitle1" sx={{ wordBreak: 'break-all' }}>
               {name}
             </Typography>
-
-            <Divider sx={{ borderStyle: 'dashed' }} />
-
-            {renderProperties}
           </Stack>
         </Scrollbar>
 
@@ -152,7 +125,6 @@ export default function FileManagerFileDetails({
 
       <FileManagerShareDialog
         open={share.value}
-        shared={shared}
         inviteEmail={inviteEmail}
         onChangeInvite={handleChangeInvite}
         onCopyLink={onCopyLink}

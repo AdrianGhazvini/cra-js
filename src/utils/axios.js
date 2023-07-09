@@ -39,6 +39,17 @@ axiosInstance.interceptors.response.use(
 
 export default axiosInstance;
 
+export const getUserImages = async (userId) => {
+  const url = endpoints.user_images.get(userId);
+  try {
+    const response = await fetcher(url);
+    return response;
+  } catch (error) {
+    console.error('Failed to fetch user images:', error);
+    throw error;
+  }
+};
+
 export const fetcher = async args => {
   const [url, config] = Array.isArray(args) ? args : [args];
   const res = await axiosInstance.get(url, { ...config });
@@ -69,5 +80,9 @@ export const endpoints = {
     list: '/api/product/list',
     details: '/api/product/details',
     search: '/api/product/search',
+  },
+  user_images: {
+    upload: 'http://localhost:8000/api/user-images/upload/',
+    get: (userId) => `http://localhost:8000/api/user-images/get/?user_id=${userId}`,
   },
 };
