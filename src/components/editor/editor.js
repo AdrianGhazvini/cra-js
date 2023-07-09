@@ -17,6 +17,7 @@ export default function Editor({
   value,
   name,
   sx,
+  quillRef,
   ...other
 }) {
   const modules = {
@@ -35,6 +36,7 @@ export default function Editor({
   };
 
   const populatedValue = value.replaceAll('<first_name>', name);
+  
 
   return (
     <>
@@ -52,6 +54,7 @@ export default function Editor({
         <Toolbar id={id} isSimple={simple} />
 
         <ReactQuill
+          ref={(el) => { quillRef.current = el }}
           value={populatedValue}
           modules={modules}s
           formats={formats}
@@ -72,4 +75,5 @@ Editor.propTypes = {
   sx: PropTypes.object,
   value: PropTypes.string,
   name: PropTypes.string,
+  quillRef: PropTypes.object,
 };
