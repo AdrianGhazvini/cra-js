@@ -11,7 +11,7 @@ import { useMockedUser } from 'src/hooks/use-mocked-user';
 import { fetcher, endpoints, getUserImages } from 'src/utils/axios';
 
 
-export default function MailHeader({ onOpenNav, onOpenMail, setDisputeLetter, ...other }) {
+export default function MailHeader({ onOpenNav, onOpenMail, setDisputeLetter, setHasAddedImages, ...other }) {
   const methods = useForm();
   const { watch } = methods;
   const [disputeItems, setDisputeItems] = useState([]);
@@ -25,6 +25,7 @@ export default function MailHeader({ onOpenNav, onOpenMail, setDisputeLetter, ..
         const response = await fetcher(`${endpoints.mail.labels}?item=${disputeItem}&reason=${disputeReason}`);
         if (response.labels && response.labels[disputeReason]) {
           setDisputeLetter(response.labels[disputeReason]); // Use setLetter to update the letter in the parent state
+          setHasAddedImages(false);
         } else {
           console.error('Dispute reason not found in response:', response);
         }
@@ -35,24 +36,6 @@ export default function MailHeader({ onOpenNav, onOpenMail, setDisputeLetter, ..
   };
 
   const { user } = useMockedUser();
-
-  useEffect(() => {
-    const fetchUserImages = async () => {
-      try {
-        const userId = user?.id;
-        const images = await getUserImages(userId);
-        if (images.drivers_license && images.utility_bill) {
-          console.log("Driver's License: ", `http://localhost:8000${images.drivers_license}`);
-          console.log("Utility Bill: ", `http://localhost:8000${images.utility_bill}`);
-        } else {
-          console.error('User images not found');
-        }
-      } catch (error) {
-        console.error('Failed to fetch user images:', error);
-      }
-    };
-    fetchUserImages();
-  }, [user?.id]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -113,11 +96,11 @@ export default function MailHeader({ onOpenNav, onOpenMail, setDisputeLetter, ..
           ))}
         </RHFSelect>
 
-        <Button variant="contained" 
-        color="primary" 
-        onClick={fetchLetters} 
-        disabled={!disputeItem || !disputeReason}
-        style={{ minHeight: '50px' , marginBottom: '8px' }}
+        <Button variant="contained"
+          color="primary"
+          onClick={fetchLetters}
+          disabled={!disputeItem || !disputeReason}
+          style={{ minHeight: '50px', marginBottom: '8px' }}
         >
           Generate Dispute Letter
         </Button>
@@ -129,5 +112,6 @@ export default function MailHeader({ onOpenNav, onOpenMail, setDisputeLetter, ..
 MailHeader.propTypes = {
   onOpenMail: PropTypes.func,
   onOpenNav: PropTypes.func,
-  setDisputeLetter: PropTypes.func
+  setDisputeLetter: PropTypes.func,
+  setHasAddedImages: PropTypes.func
 };

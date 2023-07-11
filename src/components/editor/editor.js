@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import 'src/utils/highlight';
 import ReactQuill from 'react-quill';
+import { useEffect, useState, useRef } from 'react';
 // @mui
 import { alpha } from '@mui/material/styles';
 //
@@ -11,13 +12,17 @@ import Toolbar, { formats } from './toolbar';
 
 export default function Editor({
   id = 'minimal-quill',
+  quillRef,
   error,
   simple = false,
   helperText,
   value,
   name,
+  driversLicenseUrl,
+  utilityBillUrl,
+  onContentChange,
+  hasAddedImages,
   sx,
-  quillRef,
   ...other
 }) {
   const modules = {
@@ -35,8 +40,44 @@ export default function Editor({
     },
   };
 
-  const populatedValue = value.replaceAll('<first_name>', name);
-  
+  const [localValue, setLocalValue] = useState(value);
+
+  const [addedImages, setAddedImages] = useState(hasAddedImages);
+
+
+  const toDataURL = (url, callback) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        callback(reader.result);
+      }
+      reader.readAsDataURL(xhr.response);
+    };
+    xhr.open('GET', url);
+    xhr.responseType = 'blob';
+    xhr.send();
+  }
+
+  useEffect(() => {
+    setLocalValue(value.replaceAll('<first_name>', name));
+  }, [value, name]);
+
+  useEffect(() => {
+    if (localValue && quillRef.current && !addedImages) {
+      (async () => {
+        toDataURL(driversLicenseUrl, (dataUrl) => {
+          setLocalValue(prevLocalValue => `${prevLocalValue}<img src="${dataUrl}">`);
+        });
+
+        toDataURL(utilityBillUrl, (dataUrl) => {
+          setLocalValue(prevLocalValue => `${prevLocalValue}<img src="${dataUrl}">`);
+        });
+
+        setAddedImages(true); // set hasAddedImages to true after adding the images
+      })();
+    }
+  }, [localValue, driversLicenseUrl, utilityBillUrl, addedImages, quillRef]);
 
   return (
     <>
@@ -54,11 +95,12 @@ export default function Editor({
         <Toolbar id={id} isSimple={simple} />
 
         <ReactQuill
-          ref={(el) => { quillRef.current = el }}
-          value={populatedValue}
-          modules={modules}s
+          ref={quillRef}
+          value={localValue}
+          modules={modules}
           formats={formats}
           placeholder="Your dispute letter will be generated here..."
+          onChange={onContentChange}
           {...other}
         />
       </StyledEditor>
@@ -68,6 +110,7 @@ export default function Editor({
 }
 
 Editor.propTypes = {
+  quillRef: PropTypes.object,
   error: PropTypes.bool,
   helperText: PropTypes.object,
   id: PropTypes.string,
@@ -75,5 +118,8 @@ Editor.propTypes = {
   sx: PropTypes.object,
   value: PropTypes.string,
   name: PropTypes.string,
-  quillRef: PropTypes.object,
+  driversLicenseUrl: PropTypes.string,
+  utilityBillUrl: PropTypes.string,
+  onContentChange: PropTypes.func,
+  hasAddedImages: PropTypes.bool,
 };

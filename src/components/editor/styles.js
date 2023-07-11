@@ -32,8 +32,8 @@ export const StyledEditor = styled('div')((props) => ({
     height: '100%',
   },
   '.ql-editor img': {
-    maxWidth: '700px', 
-    maxHeight: '700px', 
+    maxWidth: '500px', 
+    maxHeight: '500px', 
     width: 'auto',
     height: 'auto',
   },
