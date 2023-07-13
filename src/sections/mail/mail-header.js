@@ -11,7 +11,7 @@ import { useMockedUser } from 'src/hooks/use-mocked-user';
 import { fetcher, endpoints, getUserImages } from 'src/utils/axios';
 
 
-export default function MailHeader({ onOpenNav, onOpenMail, setDisputeLetter, setHasAddedImages, ...other }) {
+export default function MailHeader({ onOpenNav, onOpenMail, setDisputeLetter, setHasAddedImages, setDisputeItemParent, ...other }) {
   const methods = useForm();
   const { watch } = methods;
   const [disputeItems, setDisputeItems] = useState([]);
@@ -22,10 +22,14 @@ export default function MailHeader({ onOpenNav, onOpenMail, setDisputeLetter, se
   const fetchLetters = async () => {
     try {
       if (disputeItem && disputeReason) {
+        if (setDisputeItemParent) {
+          setDisputeItemParent(disputeItem);
+        }
         const response = await fetcher(`${endpoints.mail.labels}?item=${disputeItem}&reason=${disputeReason}`);
+        console.log("1",);
         if (response.labels && response.labels[disputeReason]) {
+          console.log("2");
           setDisputeLetter(response.labels[disputeReason]); // Use setLetter to update the letter in the parent state
-          setHasAddedImages(false);
         } else {
           console.error('Dispute reason not found in response:', response);
         }
@@ -34,8 +38,6 @@ export default function MailHeader({ onOpenNav, onOpenMail, setDisputeLetter, se
       console.error('Failed to fetch dispute letter:', error);
     }
   };
-
-  const { user } = useMockedUser();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -98,7 +100,7 @@ export default function MailHeader({ onOpenNav, onOpenMail, setDisputeLetter, se
 
         <Button variant="contained"
           color="primary"
-          onClick={fetchLetters}
+          onClick={() => {setHasAddedImages(false); fetchLetters();}}
           disabled={!disputeItem || !disputeReason}
           style={{ minHeight: '50px', marginBottom: '8px' }}
         >
@@ -113,5 +115,6 @@ MailHeader.propTypes = {
   onOpenMail: PropTypes.func,
   onOpenNav: PropTypes.func,
   setDisputeLetter: PropTypes.func,
-  setHasAddedImages: PropTypes.func
+  setHasAddedImages: PropTypes.func,
+  setDisputeItemParent: PropTypes.func
 };

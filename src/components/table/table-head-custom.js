@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 // @mui
 import Box from '@mui/material/Box';
 import TableRow from '@mui/material/TableRow';
+import Checkbox from '@mui/material/Checkbox';
 import TableHead from '@mui/material/TableHead';
 import TableCell from '@mui/material/TableCell';
 import TableSortLabel from '@mui/material/TableSortLabel';
@@ -41,12 +42,29 @@ export default function TableHeadCustom({
             align={headCell.align || 'left'}
             sortDirection={orderBy === headCell.id ? order : false}
             sx={{
-              flexGrow: 1, 
               width: headCell.width,
-              minWidth: headCell.minWidth
+              minWidth: headCell.minWidth,
+              display: { xs: headCell.hideOnMobile ? 'none' : 'table-cell', md: 'table-cell' }  // add this
             }}
           >
-            {headCell.label}
+            {onSort ? (
+              <TableSortLabel
+                hideSortIcon
+                active={orderBy === headCell.id}
+                direction={orderBy === headCell.id ? order : 'asc'}
+                onClick={() => onSort(headCell.id)}
+              >
+                {headCell.label}
+
+                {orderBy === headCell.id ? (
+                  <Box sx={{ ...visuallyHidden }}>
+                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                  </Box>
+                ) : null}
+              </TableSortLabel>
+            ) : (
+              headCell.label
+            )}
           </TableCell>
         ))}
       </TableRow>

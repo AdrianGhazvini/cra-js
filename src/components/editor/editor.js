@@ -18,10 +18,12 @@ export default function Editor({
   helperText,
   value,
   name,
+  disputeItemParent,
   driversLicenseUrl,
   utilityBillUrl,
   onContentChange,
   hasAddedImages,
+  setHasAddedImages,
   sx,
   ...other
 }) {
@@ -42,9 +44,6 @@ export default function Editor({
 
   const [localValue, setLocalValue] = useState(value);
 
-  const [addedImages, setAddedImages] = useState(hasAddedImages);
-
-
   const toDataURL = (url, callback) => {
     const xhr = new XMLHttpRequest();
     xhr.onload = function () {
@@ -61,10 +60,12 @@ export default function Editor({
 
   useEffect(() => {
     setLocalValue(value.replaceAll('<first_name>', name));
-  }, [value, name]);
+    setLocalValue(value.replaceAll('<credit_item>', disputeItemParent));
+  }, [value, name, disputeItemParent]);
 
   useEffect(() => {
-    if (localValue && quillRef.current && !addedImages) {
+    console.log('hasAddedImages:', hasAddedImages)
+    if (localValue && quillRef.current && !hasAddedImages) {
       (async () => {
         toDataURL(driversLicenseUrl, (dataUrl) => {
           setLocalValue(prevLocalValue => `${prevLocalValue}<img src="${dataUrl}">`);
@@ -74,10 +75,10 @@ export default function Editor({
           setLocalValue(prevLocalValue => `${prevLocalValue}<img src="${dataUrl}">`);
         });
 
-        setAddedImages(true); // set hasAddedImages to true after adding the images
+        setHasAddedImages(true); // set hasAddedImages to true after adding the images
       })();
     }
-  }, [localValue, driversLicenseUrl, utilityBillUrl, addedImages, quillRef]);
+  }, [localValue, driversLicenseUrl, utilityBillUrl, setHasAddedImages, hasAddedImages, quillRef]);
 
   return (
     <>
@@ -118,8 +119,10 @@ Editor.propTypes = {
   sx: PropTypes.object,
   value: PropTypes.string,
   name: PropTypes.string,
+  disputeItemParent: PropTypes.string,
   driversLicenseUrl: PropTypes.string,
   utilityBillUrl: PropTypes.string,
   onContentChange: PropTypes.func,
   hasAddedImages: PropTypes.bool,
+  setHasAddedImages: PropTypes.func,
 };

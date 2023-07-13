@@ -8,14 +8,10 @@ import Grid from '@mui/material/Grid';
 // hooks
 import { useMockedUser } from 'src/hooks/use-mocked-user';
 import { useBoolean } from 'src/hooks/use-boolean';
-import { useResponsive } from 'src/hooks/use-responsive';
-// routes
-import { paths } from 'src/routes/paths';
-import { useRouter, useSearchParams } from 'src/routes/hook';
 // components
 import { useSettingsContext } from 'src/components/settings';
 // axios
-import { getUserImages } from 'src/utils/axios';
+import axios, { getUserImages, endpoints } from 'src/utils/axios';
 //
 import Editor from 'src/components/editor'; 
 import MailHeader from '../mail-header';
@@ -26,27 +22,19 @@ import MailCompose from '../mail-compose';
 const LABEL_INDEX = 'inbox';
 
 export default function MailView() {
-  const router = useRouter();
-
   const { user } = useMockedUser();
-
-  const searchParams = useSearchParams();
-
-  const selectedLabelId = searchParams.get('label') || LABEL_INDEX;
-
-  const selectedMailId = searchParams.get('id') || '';
-
-  const upMd = useResponsive('up', 'md');
 
   const settings = useSettingsContext();
 
   const openNav = useBoolean();
 
-  const openMail = useBoolean();
-
   const openCompose = useBoolean();
+
+  const [letterSent, setLetterSent] = useState(false);
   
   const [hasUserTyped, setHasUserTyped] = useState(false);
+
+  const [disputeItemParent, setDisputeItemParent] = useState("");
 
   const [disputeLetter, setDisputeLetter] = useState("");
 
@@ -86,6 +74,27 @@ export default function MailView() {
     // document.body.removeChild(iframe);
   }
 
+  const handleSent = async () => {
+    setLetterSent(true);
+  };
+
+  const handleSave = async () => {
+    const editorContent = quillRef.current.getEditor().root.innerHTML;
+
+    try {
+      console.log('disputeItemParent: ', disputeItemParent);
+      await axios.post(endpoints.letter.save, {
+        user_id: user?.id,
+        letter: editorContent,
+        dispute_reason: disputeItemParent,
+        letter_sent: letterSent
+      });
+
+      alert("Letter saved successfully!");
+    } catch (error) {
+      console.error('Failed to save letter:', error);
+    }
+  };
 
   const fetchUserImages = useCallback(async () => {
     try {
@@ -145,6 +154,7 @@ export default function MailView() {
               onOpenNav={openNav.onTrue}
               setDisputeLetter={setDisputeLetter}
               setHasAddedImages={setHasAddedImages}
+              setDisputeItemParent={setDisputeItemParent}
             />
           </Stack>
           <Stack
@@ -163,10 +173,12 @@ export default function MailView() {
               quillRef={quillRef}
               value={disputeLetter}
               name={user?.displayName}
+              disputeItemParent={disputeItemParent}
               driversLicenseUrl={driversLicenseUrl}
               utilityBillUrl={utilityBillUrl}
               onContentChange={() => setHasUserTyped(true)}
               hasAddedImages={hasAddedImages}
+              setHasAddedImages={setHasAddedImages}
             />
           </Stack>
           <Grid
@@ -180,6 +192,7 @@ export default function MailView() {
                 color="primary"
                 style={{ minHeight: '50px', marginBottom: '8px', width: '100%' }}
                 disabled={!hasUserTyped}
+                onClick={handleSave}
               >
                 Save Letter
               </Button>
@@ -201,6 +214,7 @@ export default function MailView() {
                 color="primary"
                 style={{ minHeight: '50px', marginBottom: '8px', width: '100%' }}
                 disabled={!hasUserTyped}
+                onClick={handleSent}
               >
                 Send it For You
               </Button>

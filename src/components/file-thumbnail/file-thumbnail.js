@@ -8,11 +8,13 @@ import DownloadButton from './download-button';
 
 // ----------------------------------------------------------------------
 
-export default function FileThumbnail({ file, tooltip, onDownload, sx, imgSx }) {
-
+export default function FileThumbnail({ file, tooltip, imageView, onDownload, sx, imgSx }) {
   const { name = '', path = '', preview = '' } = fileData(file);
 
+  const format = fileFormat(path || preview);
+
   const renderContent =
+    format === 'image' && imageView ? (
       <Box
         component="img"
         src={preview}
@@ -24,6 +26,18 @@ export default function FileThumbnail({ file, tooltip, onDownload, sx, imgSx }) 
           ...imgSx,
         }}
       />
+    ) : (
+      <Box
+        component="img"
+        src={fileThumb(format)}
+        sx={{
+          width: 32,
+          height: 32,
+          flexShrink: 0,
+          ...sx,
+        }}
+      />
+    );
 
   if (tooltip) {
     return (
@@ -55,6 +69,7 @@ export default function FileThumbnail({ file, tooltip, onDownload, sx, imgSx }) 
 
 FileThumbnail.propTypes = {
   file: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  imageView: PropTypes.bool,
   imgSx: PropTypes.object,
   onDownload: PropTypes.func,
   sx: PropTypes.object,

@@ -4,8 +4,6 @@ import { paths } from 'src/routes/paths';
 // locales
 import { useLocales } from 'src/locales';
 // components
-import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
 import SvgColor from 'src/components/svg-color';
 
 // ----------------------------------------------------------------------
@@ -66,6 +64,11 @@ export function useNavData() {
             title: t('mail'),
             path: paths.dashboard.mail,
             icon: ICONS.mail,
+          },
+          {
+            title: t('letter_manager'),
+            path: paths.dashboard.letterManager,
+            icon: ICONS.folder,
           },
           {
             title: t('chat'),

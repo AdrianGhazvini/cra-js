@@ -85,4 +85,7 @@ export const endpoints = {
     upload: 'http://localhost:8000/api/user-images/upload/',
     get: (userId) => `http://localhost:8000/api/user-images/get/?user_id=${userId}`,
   },
+  letter: {
+    save: 'http://localhost:8000/api/content/save-letter/'
+  }
 };
