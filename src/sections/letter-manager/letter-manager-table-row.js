@@ -31,7 +31,7 @@ import LetterManagerFileDetails from './letter-manager-file-details';
 export default function LetterManagerTableRow({ row, selected, onSelectRow, onDeleteRow }) {
   const theme = useTheme();
 
-  const { name: recipient, item_disputed, created, status } = row;
+  const { name: recipient, item_disputed, created, status, path } = row;
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -58,10 +58,38 @@ export default function LetterManagerTableRow({ row, selected, onSelectRow, onDe
     doubleClick: () => console.info('DOUBLE CLICK'),
   });
 
-  const handleCopy = useCallback(() => {
-    enqueueSnackbar('Copied!');
-    copy(row.url);
-  }, [copy, enqueueSnackbar, row.url]);
+  const handlePrint = async () => {
+    const newPath = `http://localhost:8000${path}`
+    console.log('path: ', newPath);
+    const response = await fetch(newPath);
+    const txtContent = await response.text();
+
+    const iframe = document.createElement('iframe');
+    iframe.style.visibility = 'hidden';
+    document.body.appendChild(iframe);
+    iframe.contentDocument.write(`
+    <html>
+      <head>
+        <title>Print Letter</title>
+        <style>
+          img {
+            max-width: 300px;
+            height: auto;
+          }
+        </style>
+      </head>
+      <body>
+        <div>${txtContent}</div>
+      </body>
+    </html>
+  `);
+    iframe.contentDocument.close();
+    iframe.onload = () => {
+      iframe.contentWindow.print();
+    }
+    enqueueSnackbar('Printed!');
+    // document.body.removeChild(iframe);
+  }
 
   const defaultStyles = {
     borderTop: `solid 1px ${alpha(theme.palette.grey[500], 0.16)}`,
@@ -139,7 +167,7 @@ export default function LetterManagerTableRow({ row, selected, onSelectRow, onDe
         </TableCell>
 
         <TableCell align="right" onClick={handleClick} sx={{ whiteSpace: 'nowrap', display: { xs: 'none', md: 'table-cell' } }}>
-          {status}
+          {status === true ? "Sent" : "Not Sent"}
         </TableCell>
 
         <TableCell
@@ -164,7 +192,7 @@ export default function LetterManagerTableRow({ row, selected, onSelectRow, onDe
         <MenuItem
           onClick={() => {
             popover.onClose();
-            handleCopy();
+            handlePrint();
           }}
         >
           <Iconify icon="fluent:print-20-filled" />
@@ -187,7 +215,7 @@ export default function LetterManagerTableRow({ row, selected, onSelectRow, onDe
 
       <LetterManagerFileDetails
         item={row}
-        onCopyLink={handleCopy}
+        onPrintLink={handlePrint}
         open={details.value}
         onClose={details.onFalse}
         onDelete={onDeleteRow}

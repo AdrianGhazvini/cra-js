@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 // @mui
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -9,6 +9,7 @@ import { fTimestamp } from 'src/utils/format-time';
 // _mock
 import { _allDocFiles } from 'src/_mock/_file-manager-files';
 // hooks
+import { useMockedUser } from 'src/hooks/use-mocked-user';
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
 import EmptyContent from 'src/components/empty-content';
@@ -16,9 +17,10 @@ import { fileFormat } from 'src/components/file-thumbnail';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { useSettingsContext } from 'src/components/settings';
 import { useTable, getComparator } from 'src/components/table';
+// axios
+import axios, { getUserLetters , endpoints } from 'src/utils/axios';
 //
 import LetterManagerTable from '../letter-manager-table';
-import LetterManagerFilters from '../letter-manager-filters';
 import LetterManagerFiltersResult from '../letter-manager-filters-result';
 
 // ----------------------------------------------------------------------
@@ -39,9 +41,33 @@ export default function LetterManagerView() {
 
   const confirm = useBoolean();
 
-  const [tableData, setTableData] = useState(_allDocFiles);
+  const [tableData, setTableData] = useState([]);
 
   const [filters, setFilters] = useState(defaultFilters);
+
+  const [loading, setLoading] = useState(false);
+
+  const [error, setError] = useState(null);
+
+  const { user } = useMockedUser();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      console.log("Fetching data ---- ");
+      setLoading(true);
+      try {
+        const userId = user?.id;
+        const response = await getUserLetters(userId);
+        console.log("Response ---- ", response);
+        setTableData(response);
+      } catch (e) {
+        setError(e);
+        console.log("Error ---- ", e);
+      }
+      setLoading(false);
+    };
+    fetchData();
+  }, [setTableData, setLoading, setError, user?.id]);
 
   const dateError =
     filters.startDate && filters.endDate
@@ -78,42 +104,31 @@ export default function LetterManagerView() {
   );
 
   const handleDeleteItem = useCallback(
-    (id) => {
+    async (id) => {
       const deleteRow = tableData.filter((row) => row.id !== id);
       setTableData(deleteRow);
 
       table.onUpdatePageDeleteRow(dataInPage.length);
+
+      await deleteLetterFromBackend(id);
     },
     [dataInPage.length, table, tableData]
   );
 
-  const handleDeleteItems = useCallback(() => {
-    const deleteRows = tableData.filter((row) => !table.selected.includes(row.id));
-    setTableData(deleteRows);
-
-    table.onUpdatePageDeleteRows({
-      totalRows: tableData.length,
-      totalRowsInPage: dataInPage.length,
-      totalRowsFiltered: dataFiltered.length,
-    });
-  }, [dataFiltered.length, dataInPage.length, table, tableData]);
+  async function deleteLetterFromBackend(letterId) {
+    try {
+      const response = await axios.delete(endpoints.letter.delete, { data: {id: letterId}});
+      if (response.status === 200) {
+        console.log("Item deleted successfully from the backend");
+      }
+    } catch (e) {
+      console.error("Error deleting item", e);
+    }
+  }
 
   const handleResetFilters = useCallback(() => {
     setFilters(defaultFilters);
   }, []);
-
-  const renderFilters = (
-    <Stack
-      spacing={2}
-      direction={{ xs: 'column', md: 'row' }}
-      alignItems={{ xs: 'flex-end', md: 'center' }}
-    >
-      <LetterManagerFilters
-        filters={filters}
-        onFilters={handleFilters}
-      />
-    </Stack>
-  );
 
   const renderResults = (
     <LetterManagerFiltersResult
@@ -140,8 +155,6 @@ export default function LetterManagerView() {
             my: { xs: 3, md: 5 },
           }}
         >
-          {renderFilters}
-
           {canReset && renderResults}
         </Stack>
 
@@ -181,7 +194,6 @@ export default function LetterManagerView() {
             variant="contained"
             color="error"
             onClick={() => {
-              handleDeleteItems();
               confirm.onFalse();
             }}
           >
@@ -198,6 +210,7 @@ export default function LetterManagerView() {
 function applyFilter({ inputData, comparator, filters, dateError }) {
   const { name, type, startDate, endDate } = filters;
 
+  console.log(inputData);
   const stabilizedThis = inputData.map((el, index) => [el, index]);
 
   stabilizedThis.sort((a, b) => {

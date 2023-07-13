@@ -10,6 +10,7 @@ import { useMockedUser } from 'src/hooks/use-mocked-user';
 import { useBoolean } from 'src/hooks/use-boolean';
 // components
 import { useSettingsContext } from 'src/components/settings';
+import { useSnackbar } from 'src/components/snackbar';
 // axios
 import axios, { getUserImages, endpoints } from 'src/utils/axios';
 //
@@ -25,6 +26,8 @@ export default function MailView() {
   const { user } = useMockedUser();
 
   const settings = useSettingsContext();
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const openNav = useBoolean();
 
@@ -90,7 +93,7 @@ export default function MailView() {
         letter_sent: letterSent
       });
 
-      alert("Letter saved successfully!");
+      enqueueSnackbar('Letter Saved Successfully!');
     } catch (error) {
       console.error('Failed to save letter:', error);
     }

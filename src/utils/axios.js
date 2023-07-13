@@ -49,6 +49,17 @@ export const getUserImages = async (userId) => {
     throw error;
   }
 };
+  
+export const getUserLetters = async (userId) => {
+  const url = endpoints.letter.get(userId);
+  try {
+    const response = await fetcher(url);
+    return response;
+  } catch (error) {
+    console.error('Failed to fetch user letters:', error);
+    throw error;
+  }
+};
 
 export const fetcher = async args => {
   const [url, config] = Array.isArray(args) ? args : [args];
@@ -86,6 +97,8 @@ export const endpoints = {
     get: (userId) => `http://localhost:8000/api/user-images/get/?user_id=${userId}`,
   },
   letter: {
-    save: 'http://localhost:8000/api/content/save-letter/'
+    save: 'http://localhost:8000/api/content/save-letter/',
+    get: (userId) => `http://localhost:8000/api/content/get-letters/?user_id=${userId}`,
+    delete: 'http://localhost:8000/api/content/delete-letter/',
   }
 };

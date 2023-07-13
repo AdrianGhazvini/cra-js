@@ -26,7 +26,7 @@ import LetterManagerTableRow from './letter-manager-table-row';
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Recipient' },
-  { id: 'item-disputed', label: 'Item Disputed', hideOnMobile: true },
+  { id: 'item_disputed', label: 'Item Disputed', hideOnMobile: true },
   { id: 'created', label: 'Created', hideOnMobile: true },
   { id: 'status', label: 'Status', align: 'right', hideOnMobile: true },
   { id: '', label: ''},
