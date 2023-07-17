@@ -19,7 +19,7 @@ const icon = (name) => (
 const ICONS = {
   job: icon('ic_job'),
   blog: icon('ic_blog'),
-  chat: icon('ic_chat'),
+  support: icon('ic_chat'),
   mail: icon('ic_mail'),
   user: icon('ic_user'),
   file: icon('ic_file'),
@@ -54,11 +54,10 @@ export function useNavData() {
         items: [
           { title: t('app'), path: paths.dashboard.root, icon: ICONS.dashboard },
           { title: t('analytics'), path: paths.dashboard.general.analytics, icon: ICONS.analytics },
-          { title: t('blank'), path: paths.dashboard.blank, icon: ICONS.blank },
           {
             title: t('file_manager'),
             path: paths.dashboard.fileManager,
-            icon: ICONS.folder,
+            icon: ICONS.file,
           },
           {
             title: t('mail'),
@@ -71,15 +70,15 @@ export function useNavData() {
             icon: ICONS.folder,
           },
           {
-            title: t('chat'),
-            path: paths.dashboard.chat,
-            icon: ICONS.chat,
+            title: t('billing'),
+            path: paths.dashboard.billing,
+            icon: ICONS.invoice,
           },
+          { title: t('blank'), path: paths.dashboard.blank, icon: ICONS.support },
         ],
       },
     ],
     [t]
   );
-
   return data;
 }

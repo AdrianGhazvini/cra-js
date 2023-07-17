@@ -1,12 +1,11 @@
 import PropTypes from 'prop-types';
 import { format } from 'date-fns';
-import { useState, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 // @mui
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
-import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
@@ -16,7 +15,6 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useDoubleClick } from 'src/hooks/use-double-click';
-import { useCopyToClipboard } from 'src/hooks/use-copy-to-clipboard';
 // components
 import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
@@ -28,28 +26,29 @@ import LetterManagerFileDetails from './letter-manager-file-details';
 
 // ----------------------------------------------------------------------
 
-export default function LetterManagerTableRow({ row, selected, onSelectRow, onDeleteRow }) {
+export default function LetterManagerTableRow({ row_id, row, selected, onSelectRow, onDeleteRow }) {
   const theme = useTheme();
 
   const { name: recipient, item_disputed, created, status, path } = row;
 
+  console.log("row_id: ", row_id);
+  const id = row_id;
+
+  const newPath = `http://localhost:8000${path}`
+
   const { enqueueSnackbar } = useSnackbar();
+  
+  const [textContent, setTextContent] = useState(''); 
 
-  const { copy } = useCopyToClipboard();
-
-  const [inviteEmail, setInviteEmail] = useState('');
+  const [updatedStatus, setUpdatedStatus] = useState(status);
 
   const details = useBoolean();
 
   const share = useBoolean();
 
-  const confirm = useBoolean();
+  const [confirm, setConfirm] = useState(false);
 
   const popover = usePopover();
-
-  const handleChangeInvite = useCallback((event) => {
-    setInviteEmail(event.target.value);
-  }, []);
 
   const handleClick = useDoubleClick({
     click: () => {
@@ -58,12 +57,19 @@ export default function LetterManagerTableRow({ row, selected, onSelectRow, onDe
     doubleClick: () => console.info('DOUBLE CLICK'),
   });
 
-  const handlePrint = async () => {
-    const newPath = `http://localhost:8000${path}`
-    console.log('path: ', newPath);
-    const response = await fetch(newPath);
-    const txtContent = await response.text();
+  useEffect(() => {
+    const fetchData = async () => {
+      const cacheBuster = new Date().getTime();
+      const response = await fetch(`${newPath}?t=${cacheBuster}`);
+      const newTextContent = await response.text();
+      setTextContent(newTextContent);
+    };
+    if(details.value) {
+      fetchData();
+    }
+  }, [newPath, details.value]); 
 
+  const handlePrint = async () => {
     const iframe = document.createElement('iframe');
     iframe.style.visibility = 'hidden';
     document.body.appendChild(iframe);
@@ -79,7 +85,7 @@ export default function LetterManagerTableRow({ row, selected, onSelectRow, onDe
         </style>
       </head>
       <body>
-        <div>${txtContent}</div>
+        <div>${textContent}</div>
       </body>
     </html>
   `);
@@ -167,7 +173,7 @@ export default function LetterManagerTableRow({ row, selected, onSelectRow, onDe
         </TableCell>
 
         <TableCell align="right" onClick={handleClick} sx={{ whiteSpace: 'nowrap', display: { xs: 'none', md: 'table-cell' } }}>
-          {status === true ? "Sent" : "Not Sent"}
+          {updatedStatus === true ? "Sent" : "Not Sent"}
         </TableCell>
 
         <TableCell
@@ -203,7 +209,7 @@ export default function LetterManagerTableRow({ row, selected, onSelectRow, onDe
 
         <MenuItem
           onClick={() => {
-            confirm.onTrue();
+            setConfirm(true);
             popover.onClose();
           }}
           sx={{ color: 'error.main' }}
@@ -219,14 +225,23 @@ export default function LetterManagerTableRow({ row, selected, onSelectRow, onDe
         open={details.value}
         onClose={details.onFalse}
         onDelete={onDeleteRow}
+        value={textContent}
+        item_disputed={item_disputed}
+        letter_name={recipient}
+        item_id={id}
+        setUpdatedStatus={setUpdatedStatus}
+        setConfirm={setConfirm}
       />
       <ConfirmDialog
-        open={confirm.value}
-        onClose={confirm.onFalse}
+        open={confirm}
+        onClose={() => setConfirm(false)}
         title="Delete"
         content="Are you sure want to delete?"
         action={
-          <Button variant="contained" color="error" onClick={onDeleteRow}>
+          <Button variant="contained" color="error" onClick={() => {
+            onDeleteRow();
+            setConfirm(false);
+          }}>
             Delete
           </Button>
         }
@@ -236,6 +251,7 @@ export default function LetterManagerTableRow({ row, selected, onSelectRow, onDe
 }
 
 LetterManagerTableRow.propTypes = {
+  row_id: PropTypes.number,
   onDeleteRow: PropTypes.func,
   onSelectRow: PropTypes.func,
   row: PropTypes.object,

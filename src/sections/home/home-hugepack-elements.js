@@ -52,7 +52,7 @@ export default function HomeHugePackElements() {
 
   const [select, setSelect] = useState('Option 1');
 
-  const [app, setApp] = useState('chat');
+  const [app, setApp] = useState('billing');
 
   const [rating, setRating] = useState(2);
 
@@ -215,9 +215,9 @@ export default function HomeHugePackElements() {
             }}
             aria-label="app"
           >
-            {['chat', 'mail', 'bell'].map((item) => (
+            {['billing', 'mail', 'bell'].map((item) => (
               <ToggleButton key={item} value={item} aria-label={item} disabled={item === 'bell'}>
-                {item === 'chat' && <Iconify icon="solar:chat-round-dots-bold" />}
+                {item === 'billing' && <Iconify icon="solar:chat-round-dots-bold" />}
                 {item === 'mail' && <Iconify icon="fluent:mail-24-filled" />}
                 {item === 'bell' && <Iconify icon="solar:bell-bing-bold" />}
               </ToggleButton>

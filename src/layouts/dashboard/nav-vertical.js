@@ -48,7 +48,7 @@ export default function NavVertical({ openNav, onCloseNav }) {
         },
       }}
     >
-      <Box component="img" src={logoImage} alt="Logo" sx={{ mt: 3, ml: 4, mb: 2, mr: 4}} />
+      <Box component="img" src={logoImage} alt="Logo" sx={{ p: '8%' }} />
 
       <NavSectionVertical
         data={navData}

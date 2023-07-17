@@ -41,12 +41,12 @@ export default function MailView() {
 
   const [disputeLetter, setDisputeLetter] = useState("");
 
-  const [hasAddedImages, setHasAddedImages] = useState(false);
-
   const [driversLicenseUrl, setDriversLicenseUrl] = useState("");
   const [utilityBillUrl, setUtilityBillUrl] = useState("");
 
   const quillRef = useRef(null);
+
+  const placeholder = "Your dispute letter will be generated here...";
 
   const handlePrint = () => {
     const editorContent = quillRef.current.getEditor().root.innerHTML;
@@ -156,8 +156,9 @@ export default function MailView() {
             <MailHeader
               onOpenNav={openNav.onTrue}
               setDisputeLetter={setDisputeLetter}
-              setHasAddedImages={setHasAddedImages}
               setDisputeItemParent={setDisputeItemParent}
+              driversLicenseUrl={driversLicenseUrl}
+              utilityBillUrl={utilityBillUrl}
             />
           </Stack>
           <Stack
@@ -170,6 +171,7 @@ export default function MailView() {
               },
               backgroundColor: 'white',
               borderRadius: 1,
+              overflowY: 'auto',
             }}
           >
             <Editor
@@ -180,8 +182,7 @@ export default function MailView() {
               driversLicenseUrl={driversLicenseUrl}
               utilityBillUrl={utilityBillUrl}
               onContentChange={() => setHasUserTyped(true)}
-              hasAddedImages={hasAddedImages}
-              setHasAddedImages={setHasAddedImages}
+              placeholder={placeholder}
             />
           </Stack>
           <Grid

@@ -1,18 +1,21 @@
 import PropTypes from 'prop-types';
+import React, { useState, useRef } from 'react';
 // @mui
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Drawer from '@mui/material/Drawer';
-// utils
-import { fDateTime } from 'src/utils/format-time';
+import DialogTitle from '@mui/material/DialogTitle';
+import Dialog from '@mui/material/Dialog';
+import Grid from '@mui/material/Grid';
 // hooks
-import { useBoolean } from 'src/hooks/use-boolean';
+import { useMockedUser } from 'src/hooks/use-mocked-user';
 // components
 import Iconify from 'src/components/iconify';
-import Scrollbar from 'src/components/scrollbar';
+import axios , { endpoints } from 'src/utils/axios';
+import { useSnackbar } from 'src/components/snackbar';
+//
+import Editor from 'src/components/editor'; 
+import { set } from 'lodash';
 
 
 // ----------------------------------------------------------------------
@@ -24,97 +27,149 @@ export default function LetterManagerFileDetails({
   onCopyLink,
   onClose,
   onDelete,
+  value,
+  itemDisputed,
+  letter_name,
+  item_id,
+  setUpdatedStatus,
+  setConfirm,
   ...other
 }) {
-  const { name : recipient, item_disputed, status, created } = item;
+  const { user } = useMockedUser();
 
-  const properties = useBoolean(true);
+  const { enqueueSnackbar } = useSnackbar();
 
-  const renderProperties = (
-    <Stack spacing={1.5}>
-      <Stack
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-        sx={{ typography: 'subtitle2' }}
-      >
-        Properties
-        <IconButton size="small" onClick={properties.onToggle}>
-          <Iconify
-            icon={properties.value ? 'eva:arrow-ios-upward-fill' : 'eva:arrow-ios-downward-fill'}
-          />
-        </IconButton>
-      </Stack>
+  const quillRef = useRef(null);
 
-      {properties.value && (
-        <>
-          <Stack direction="row" sx={{ typography: 'caption', textTransform: 'capitalize' }}>
-            <Box component="span" sx={{ width: 80, color: 'text.secondary', mr: 2 }}>
-              Created
-            </Box>
-            {fDateTime(created)}
-          </Stack>
+  const handlePrint = () => {
+    const editorContent = quillRef.current.getEditor().root.innerHTML;
 
-          <Stack direction="row" sx={{ typography: 'caption', textTransform: 'capitalize' }}>
-            <Box component="span" sx={{ width: 80, color: 'text.secondary', mr: 2 }}>
-              Item Disputed
-            </Box>
-            {item_disputed}
-          </Stack>
-        </>
-      )}
-    </Stack>
-  );
+    const iframe = document.createElement('iframe');
+    iframe.style.visibility = 'hidden';
+    document.body.appendChild(iframe);
+    iframe.contentDocument.write(`
+    <html>
+      <head>
+        <title>Print Letter</title>
+        <style>
+          img {
+            max-width: 300px;
+            height: auto;
+          }
+        </style>
+      </head>
+      <body>
+        <div>${editorContent}</div>
+      </body>
+    </html>
+  `);
+    iframe.contentDocument.close();
+    iframe.onload = () => {
+      iframe.contentWindow.print();
+    }
+    // document.body.removeChild(iframe);
+  }
+
+  const handleSent = async () => {
+    try {
+      await axios.put(endpoints.letter.update_letter_sent_status, {
+        id: item_id,
+        status: true,
+      });
+      setUpdatedStatus(true);
+      enqueueSnackbar('Status Updated Successfully!');
+    } catch (error) {
+      console.error('Failed to Update Status:', error);
+    }
+  };
+
+  const handleSave = async () => {
+    const editorContent = quillRef.current.getEditor().root.innerHTML;
+
+    try {
+      await axios.put(endpoints.letter.update_letter, {
+        name: letter_name,
+        letter: editorContent,
+      });
+      enqueueSnackbar('Letter Saved Successfully!');
+    } catch (error) {
+      console.error('Failed to save letter:', error);
+    }
+  };
 
   return (
     <>
-      <Drawer
-        open={open}
-        onClose={onClose}
-        anchor="right"
-        slotProps={{
-          backdrop: { invisible: true },
-        }}
-        PaperProps={{
-          sx: { width: 320 },
-        }}
-        {...other}
-      >
-        <Scrollbar sx={{ height: 1 }}>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ p: 2.5 }}>
-            <Typography variant="h6"> Info </Typography>
-          </Stack>
-
-          <Stack
-            spacing={2.5}
-            justifyContent="center"
-            sx={{
-              p: 2.5,
-              bgcolor: 'background.neutral',
-            }}
+      <Dialog fullWidth maxWidth="sm" open={open} onClose={onClose} {...other}>
+        <DialogTitle sx={{ p: (theme) => theme.spacing(3, 3, 2, 3) }}> Edit Letter </DialogTitle>
+        <Stack
+          spacing={1}
+          direction="row"
+          flexGrow={1}
+          sx={{
+            height: {
+              xs: '72vh',
+            },
+            backgroundColor: 'white',
+            borderRadius: 1,
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          <Editor
+            quillRef={quillRef}
+            value={value}
+          />
+          <Grid
+            container
+            spacing={3}
+            justify="space-between"
+            paddingX={3}
           >
-            <Typography variant="subtitle1" sx={{ wordBreak: 'break-all' }}>
-              {recipient}
-            </Typography>
-
-            {renderProperties}
-          </Stack>
-        </Scrollbar>
-
-        <Box sx={{ p: 2.5 }}>
-          <Button
-            fullWidth
-            variant="soft"
-            color="error"
-            size="large"
-            startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
-            onClick={onDelete}
-          >
-            Delete
-          </Button>
-        </Box>
-      </Drawer>
-
+            <Grid item xs={4}>
+              <Button
+                variant="contained"
+                color="primary"
+                style={{ minHeight: '50px', marginBottom: '8px', width: '100%' }}
+                onClick={handleSave}
+              >
+                Save Letter
+              </Button>
+            </Grid>
+            <Grid item xs={4}>
+              <Button
+                variant="contained"
+                color="primary"
+                style={{ minHeight: '50px', marginBottom: '8px', width: '100%' }}
+                onClick={handlePrint}
+              >
+                Print Letter
+              </Button>
+            </Grid>
+            <Grid item xs={4}>
+              <Button
+                variant="contained"
+                color="primary"
+                style={{ minHeight: '50px', marginBottom: '8px', width: '100%' }}
+                onClick={handleSent}
+              >
+                Send it For You
+              </Button>
+            </Grid>
+          </Grid>
+          <Box sx={{ px: 3 , pb: 3}}>
+            <Button
+              fullWidth
+              variant="soft"
+              color="error"
+              size="large"
+              startIcon={<Iconify icon="solar:trash-bin-trash-bold" />}
+              onClick={() => {setConfirm(true); onClose()} }
+            >
+              Delete
+            </Button>
+          </Box>
+        </Stack>
+      </Dialog>
     </>
   );
 }
@@ -125,4 +180,10 @@ LetterManagerFileDetails.propTypes = {
   onCopyLink: PropTypes.func,
   onDelete: PropTypes.func,
   open: PropTypes.bool,
+  value: PropTypes.string,
+  itemDisputed: PropTypes.string,
+  letter_name: PropTypes.string,
+  item_id: PropTypes.number,
+  setUpdatedStatus: PropTypes.func,
+  setConfirm: PropTypes.func,
 };

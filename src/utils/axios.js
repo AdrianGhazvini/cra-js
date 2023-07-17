@@ -68,29 +68,16 @@ export const fetcher = async args => {
 };
 
 export const endpoints = {
-  chat: '/api/chat',
-  kanban: '/api/kanban',
-  calendar: '/api/calendar',
   auth: {
     me: 'http://localhost:8000/api/auth/me',
-    login: 'http://localhost:8000/login/',
-    register: 'http://localhost:8000/signup/',
+    login: 'http://localhost:8000/api/auth/login/',
+    register: 'http://localhost:8000/api/auth/signup/',
+    logout: 'http://localhost:8000/api/auth/logout/',
   },
   mail: {
     list: 'http://localhost:8000/api/content/credit-check-item/',
     details: 'http://localhost:8000/api/content/dispute-reason-item/',
     labels: 'http://localhost:8000/api/content/email-template-item/',
-  },
-  post: {
-    list: '/api/post/list',
-    details: '/api/post/details',
-    latest: '/api/post/latest',
-    search: '/api/post/search',
-  },
-  product: {
-    list: '/api/product/list',
-    details: '/api/product/details',
-    search: '/api/product/search',
   },
   user_images: {
     upload: 'http://localhost:8000/api/user-images/upload/',
@@ -100,5 +87,10 @@ export const endpoints = {
     save: 'http://localhost:8000/api/content/save-letter/',
     get: (userId) => `http://localhost:8000/api/content/get-letters/?user_id=${userId}`,
     delete: 'http://localhost:8000/api/content/delete-letter/',
+    update_letter: 'http://localhost:8000/api/content/update-letter/',
+    update_letter_sent_status: 'http://localhost:8000/api/content/update-letter-sent-status/',
+  },
+  support: {
+    send: 'http://localhost:8000/api/support/send/',
   }
 };

@@ -66,10 +66,6 @@ export default function Toolbar({ id, isSimple, ...other }) {
           {!isSimple && <button type="button" className="ql-indent" value="-1" />}
           {!isSimple && <button type="button" className="ql-indent" value="+1" />}
         </div>
-
-        <div className="ql-formats">
-          <button type="button" className="ql-image" />
-        </div>
       </div>
     </StyledEditorToolbar>
   );

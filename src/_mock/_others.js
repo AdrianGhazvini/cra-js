@@ -66,7 +66,7 @@ export const _notifications = [...Array(9)].map((_, index) => ({
     null,
     null,
   ][index],
-  type: ['friend', 'project', 'file', 'tags', 'payment', 'order', 'chat', 'mail', 'delivery'][
+  type: ['friend', 'project', 'file', 'tags', 'payment', 'order', 'billing', 'mail', 'delivery'][
     index
   ],
   category: [

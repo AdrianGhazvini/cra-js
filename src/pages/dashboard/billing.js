@@ -1,17 +1,17 @@
 import { Helmet } from 'react-helmet-async';
 // sections
-import { ChatView } from 'src/sections/chat/view';
+import { BillingView } from 'src/sections/billing/view/index';
 
 // ----------------------------------------------------------------------
 
-export default function ChatPage() {
+export default function BillingPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Chat</title>
+        <title> Dashboard: Billing</title>
       </Helmet>
 
-      <ChatView />
+      <BillingView />
     </>
   );
 }

@@ -13,8 +13,7 @@ export const StyledEditor = styled('div')((props) => ({
   ...props.sx,
   display: 'flex',
   flexDirection: 'column',
-  height: '100%',
-  overflowY: 'auto',
+  height: 'auto',
   '& .ql-toolbar.ql-snow': {
     borderColor: props.theme.palette.grey[500_32],
     flexGrow: 0,
@@ -24,18 +23,15 @@ export const StyledEditor = styled('div')((props) => ({
     flexGrow: 1,
     display: 'flex',
     flexDirection: 'column',
-    height: '100%',
   },
   '& .ql-editor': {
     flexGrow: 1,
     minHeight: 0,
-    height: '100%',
   },
   '.ql-editor img': {
-    maxWidth: '500px', 
-    maxHeight: '500px', 
+    maxWidth: '400px', 
+    maxHeight: '400px', 
     width: 'auto',
-    height: 'auto',
   },
 }));
 

@@ -93,7 +93,7 @@ export const paths = {
   dashboard: {
     root: ROOTS.DASHBOARD,
     mail: `${ROOTS.DASHBOARD}/mail`,
-    chat: `${ROOTS.DASHBOARD}/chat`,
+    billing: `${ROOTS.DASHBOARD}/billing`,
     blank: `${ROOTS.DASHBOARD}/blank`,
     kanban: `${ROOTS.DASHBOARD}/kanban`,
     calendar: `${ROOTS.DASHBOARD}/calendar`,

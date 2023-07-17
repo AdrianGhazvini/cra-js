@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import 'src/utils/highlight';
 import ReactQuill from 'react-quill';
-import { useEffect, useState, useRef } from 'react';
 // @mui
 import { alpha } from '@mui/material/styles';
 //
@@ -18,12 +17,8 @@ export default function Editor({
   helperText,
   value,
   name,
-  disputeItemParent,
-  driversLicenseUrl,
-  utilityBillUrl,
   onContentChange,
-  hasAddedImages,
-  setHasAddedImages,
+  placeholder,
   sx,
   ...other
 }) {
@@ -42,44 +37,6 @@ export default function Editor({
     },
   };
 
-  const [localValue, setLocalValue] = useState(value);
-
-  const toDataURL = (url, callback) => {
-    const xhr = new XMLHttpRequest();
-    xhr.onload = function () {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        callback(reader.result);
-      }
-      reader.readAsDataURL(xhr.response);
-    };
-    xhr.open('GET', url);
-    xhr.responseType = 'blob';
-    xhr.send();
-  }
-
-  useEffect(() => {
-    setLocalValue(value.replaceAll('<first_name>', name));
-    setLocalValue(value.replaceAll('<credit_item>', disputeItemParent));
-  }, [value, name, disputeItemParent]);
-
-  useEffect(() => {
-    console.log('hasAddedImages:', hasAddedImages)
-    if (localValue && quillRef.current && !hasAddedImages) {
-      (async () => {
-        toDataURL(driversLicenseUrl, (dataUrl) => {
-          setLocalValue(prevLocalValue => `${prevLocalValue}<img src="${dataUrl}">`);
-        });
-
-        toDataURL(utilityBillUrl, (dataUrl) => {
-          setLocalValue(prevLocalValue => `${prevLocalValue}<img src="${dataUrl}">`);
-        });
-
-        setHasAddedImages(true); // set hasAddedImages to true after adding the images
-      })();
-    }
-  }, [localValue, driversLicenseUrl, utilityBillUrl, setHasAddedImages, hasAddedImages, quillRef]);
-
   return (
     <>
       <StyledEditor
@@ -97,10 +54,10 @@ export default function Editor({
 
         <ReactQuill
           ref={quillRef}
-          value={localValue}
+          value={value}
           modules={modules}
           formats={formats}
-          placeholder="Your dispute letter will be generated here..."
+          placeholder={placeholder}
           onChange={onContentChange}
           {...other}
         />
@@ -119,10 +76,6 @@ Editor.propTypes = {
   sx: PropTypes.object,
   value: PropTypes.string,
   name: PropTypes.string,
-  disputeItemParent: PropTypes.string,
-  driversLicenseUrl: PropTypes.string,
-  utilityBillUrl: PropTypes.string,
   onContentChange: PropTypes.func,
-  hasAddedImages: PropTypes.bool,
-  setHasAddedImages: PropTypes.func,
+  placeholder: PropTypes.string,
 };

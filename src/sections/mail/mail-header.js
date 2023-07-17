@@ -11,7 +11,15 @@ import { useMockedUser } from 'src/hooks/use-mocked-user';
 import { fetcher, endpoints, getUserImages } from 'src/utils/axios';
 
 
-export default function MailHeader({ onOpenNav, onOpenMail, setDisputeLetter, setHasAddedImages, setDisputeItemParent, ...other }) {
+export default function MailHeader({
+  onOpenNav, 
+  onOpenMail, 
+  setDisputeLetter, 
+  setDisputeItemParent, 
+  driversLicenseUrl,
+  utilityBillUrl,
+  ...other 
+}) {
   const methods = useForm();
   const { watch } = methods;
   const [disputeItems, setDisputeItems] = useState([]);
@@ -28,8 +36,16 @@ export default function MailHeader({ onOpenNav, onOpenMail, setDisputeLetter, se
         const response = await fetcher(`${endpoints.mail.labels}?item=${disputeItem}&reason=${disputeReason}`);
         console.log("1",);
         if (response.labels && response.labels[disputeReason]) {
-          console.log("2");
-          setDisputeLetter(response.labels[disputeReason]); // Use setLetter to update the letter in the parent state
+          let letter = response.labels[disputeReason];
+            console.log("2");
+            const driversLicenseDataUrl = toDataURL(driversLicenseUrl);
+            const utilityBillDataUrl = toDataURL(utilityBillUrl);
+
+            Promise.all([driversLicenseDataUrl, utilityBillDataUrl]).then(([driversLicenseData, utilityBillData]) => {
+              letter = `${letter}<img src="${driversLicenseData}">`;
+              letter = `${letter}<img src="${utilityBillData}">`;
+              setDisputeLetter(letter);
+            });
         } else {
           console.error('Dispute reason not found in response:', response);
         }
@@ -38,6 +54,20 @@ export default function MailHeader({ onOpenNav, onOpenMail, setDisputeLetter, se
       console.error('Failed to fetch dispute letter:', error);
     }
   };
+
+  const toDataURL = (url) => new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(xhr.response);
+    };
+    xhr.onerror = err => reject(err);
+    xhr.open('GET', url);
+    xhr.responseType = 'blob';
+    xhr.send();
+  });
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -100,7 +130,7 @@ export default function MailHeader({ onOpenNav, onOpenMail, setDisputeLetter, se
 
         <Button variant="contained"
           color="primary"
-          onClick={() => {setHasAddedImages(false); fetchLetters();}}
+          onClick={() => {fetchLetters();}}
           disabled={!disputeItem || !disputeReason}
           style={{ minHeight: '50px', marginBottom: '8px' }}
         >
@@ -115,6 +145,7 @@ MailHeader.propTypes = {
   onOpenMail: PropTypes.func,
   onOpenNav: PropTypes.func,
   setDisputeLetter: PropTypes.func,
-  setHasAddedImages: PropTypes.func,
-  setDisputeItemParent: PropTypes.func
+  setDisputeItemParent: PropTypes.func,
+  driversLicenseUrl: PropTypes.string,
+  utilityBillUrl: PropTypes.string,
 };

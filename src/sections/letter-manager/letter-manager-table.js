@@ -10,7 +10,6 @@ import TableContainer from '@mui/material/TableContainer';
 import { tableCellClasses } from '@mui/material/TableCell';
 import { tablePaginationClasses } from '@mui/material/TablePagination';
 // components
-import Iconify from 'src/components/iconify';
 import {
   emptyRows,
   TableNoData,
@@ -40,7 +39,6 @@ export default function LetterManagerTable({
   notFound,
   onDeleteRow,
   dataFiltered,
-  onOpenConfirm,
 }) {
   const theme = useTheme();
 
@@ -109,20 +107,18 @@ export default function LetterManagerTable({
                 },
               }}
             />
-
             <TableBody>
               {dataFiltered
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row) => (
                   <LetterManagerTableRow
-                    key={row.id}
+                    row_id={row.id}
                     row={row}
                     selected={selected.includes(row.id)}
                     onSelectRow={() => onSelectRow(row.id)}
                     onDeleteRow={() => onDeleteRow(row.id)}
                   />
                 ))}
-
               <TableEmptyRows
                 height={denseHeight}
                 emptyRows={emptyRows(page, rowsPerPage, tableData.length)}
@@ -164,7 +160,6 @@ LetterManagerTable.propTypes = {
   dataFiltered: PropTypes.array,
   notFound: PropTypes.bool,
   onDeleteRow: PropTypes.func,
-  onOpenConfirm: PropTypes.func,
   table: PropTypes.object,
   tableData: PropTypes.array,
 };

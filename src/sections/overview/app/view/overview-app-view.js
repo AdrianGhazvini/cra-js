@@ -32,7 +32,7 @@ export default function OverviewAppView() {
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Grid container spacing={3}>
-        <Grid xs={12} md={12}>
+        <Grid item xs={12} md={12}>
           <AppWelcome
             title={`Welcome back 👋 \n ${user?.firstName}`}
             description="Stay a step ahead with real-time credit score updates."
@@ -47,19 +47,19 @@ export default function OverviewAppView() {
           />
         </Grid>
 
-        <Grid xs={12} md={4}>
+        <Grid item xs={12} md={4}>
           <CircularProgressWithLabel value={650} title="Transunion"/>
         </Grid>
         
-        <Grid xs={12} md={4}>
+        <Grid item xs={12} md={4}>
           <CircularProgressWithLabel value={720} title="Equifax"/>
         </Grid>
 
-        <Grid xs={12} md={4}>
+        <Grid item xs={12} md={4}>
           <CircularProgressWithLabel value={800} title="Experian"/>
         </Grid>
 
-        <Grid xs={12} md={4}>
+        <Grid item xs={12} md={4}>
           <AppWidgetSummary
             title="Transunion"
             points={25}
@@ -69,7 +69,7 @@ export default function OverviewAppView() {
           />
         </Grid>
 
-        <Grid xs={12} md={4}>
+        <Grid item xs={12} md={4}>
           <AppWidgetSummary
             title="Equifax"
             points={42}
@@ -80,7 +80,7 @@ export default function OverviewAppView() {
           />
         </Grid>
 
-        <Grid xs={12} md={4}>
+        <Grid item xs={12} md={4}>
           <AppWidgetSummary
             title="Experian"
             points={-3}
@@ -91,7 +91,7 @@ export default function OverviewAppView() {
           />
         </Grid>
 
-        <Grid xs={12} md={12} lg={12}>
+        <Grid item xs={12} md={12} lg={12}>
           <AppAreaInstalled
             title="Credit History"
             subheader="43% higher than last year"

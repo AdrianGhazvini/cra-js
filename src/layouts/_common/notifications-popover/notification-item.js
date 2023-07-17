@@ -36,7 +36,6 @@ export default function NotificationItem({ notification }) {
             component="img"
             src={`/assets/icons/notification/${
               (notification.type === 'order' && 'ic_order') ||
-              (notification.type === 'chat' && 'ic_chat') ||
               (notification.type === 'mail' && 'ic_mail') ||
               (notification.type === 'delivery' && 'ic_delivery')
             }.svg`}

@@ -127,12 +127,23 @@ export function AuthProvider({ children }) {
 
   // LOGOUT
   const logout = useCallback(async () => {
-    console.log("Logging out...");
-    setSession(null);
-    dispatch({
-      type: 'LOGOUT',
-    });
+    try {
+      console.log("Logging out...");
+      try {
+        await api.post(endpoints.auth.logout);
+        console.log("Successfully logged out on the server side.");
+      } catch (error) {
+        console.error("Error logging out on the server side:", error);
+      }
+      setSession(null);
+      dispatch({
+        type: 'LOGOUT',
+      });
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
   }, []);
+
 
   const refreshToken = useCallback(async (refreshTokenValue) => {
     try {
