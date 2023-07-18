@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import { StyledEditorToolbar } from 'src/components/editor/styles';
+// locales
+import { useLocales } from 'src/locales';
 
 // ----------------------------------------------------------------------
-
-const HEADINGS = ['Heading 1', 'Heading 2', 'Heading 3', 'Heading 4', 'Heading 5', 'Heading 6'];
 
 export const formats = [
   'align',
@@ -32,6 +32,10 @@ export const formats = [
 ];
 
 export default function Toolbar({ id, isSimple, ...other }) {
+  const { t } = useLocales();
+
+  const HEADINGS = [t('heading_1'), t('heading_2'), t('heading_3'), t('heading_4'), t('heading_5'), t('heading_6')];
+
   return (
     <StyledEditorToolbar {...other}>
       <div id={id}>
@@ -42,7 +46,7 @@ export default function Toolbar({ id, isSimple, ...other }) {
                 {heading}
               </option>
             ))}
-            <option value="">Normal</option>
+            <option value="">{t('normal')}</option>
           </select>
         </div>
 

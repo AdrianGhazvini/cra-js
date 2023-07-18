@@ -1,11 +1,11 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 // @mui
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-// hooks
-import { useMockedUser } from 'src/hooks/use-mocked-user';
+// locales
+import { useLocales } from 'src/locales';
 // components
 import { useSettingsContext } from 'src/components/settings';
 import { useSnackbar } from 'src/components/snackbar';
@@ -17,7 +17,22 @@ import Editor from 'src/components/editor';
 // ----------------------------------------------------------------------
 
 export default function BlankView() {
-  const { user } = useMockedUser();
+  const { t } = useLocales();
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const response = await axios.get(endpoints.auth.me);
+
+        setUser(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getUserData();
+  }, []);
 
   const settings = useSettingsContext();
 
@@ -28,13 +43,14 @@ export default function BlankView() {
   const handleSent = async () => {
     const editorContent = quillRef.current.getEditor().root.innerHTML;
     try {
+      const displayName = `${user? user.first_name: ""} ${user? user.last_name: ""}`;
       await axios.post(endpoints.support.send, {
-        name: user?.firstName,
-        email: user?.email,
+        name: displayName,
+        email: user? user.email: "",
         message: editorContent,
       });
 
-      enqueueSnackbar('Message sent successfully!');
+      enqueueSnackbar(t('message_sent_successfully'));
     } catch (error) {
       console.error('Failed to send message:', error);
     }
@@ -48,7 +64,7 @@ export default function BlankView() {
           mb: { xs: 3, md: 5 },
         }}
       >
-        Support
+        {t('blank')}
       </Typography>
 
       <Stack
@@ -78,7 +94,7 @@ export default function BlankView() {
         >
           <Editor
             quillRef={quillRef}
-            placeholder="Type your message here..."
+            placeholder={t('type_message_here')}
           />
         </Stack>
         <Button variant="contained"
@@ -86,7 +102,7 @@ export default function BlankView() {
             onClick={handleSent}
             style={{ minHeight: '50px', marginBottom: '8px' }}
           >
-            Send
+            {t('send')}
           </Button>
       </Stack>
     </Container>

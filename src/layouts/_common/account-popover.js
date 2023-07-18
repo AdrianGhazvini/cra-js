@@ -1,4 +1,5 @@
 import { m } from 'framer-motion';
+import { useEffect, useState } from 'react';
 // @mui
 import { alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -11,14 +12,13 @@ import Typography from '@mui/material/Typography';
 // routes
 import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hook';
-// hooks
-import { useMockedUser } from 'src/hooks/use-mocked-user';
 // auth
 import { useAuthContext } from 'src/auth/hooks';
 // components
 import { varHover } from 'src/components/animate';
 import { useSnackbar } from 'src/components/snackbar';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
+import axios, { endpoints } from 'src/utils/axios';
 
 // ----------------------------------------------------------------------
 
@@ -38,7 +38,20 @@ const OPTIONS = [
 export default function AccountPopover() {
   const router = useRouter();
 
-  const { user } = useMockedUser();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const response = await axios.get(endpoints.auth.me);
+
+        setUser(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getUserData();
+  }, []);
 
   const { logout } = useAuthContext();
 
@@ -61,7 +74,7 @@ export default function AccountPopover() {
     popover.onClose();
     router.push(path);
   };
-
+  
   return (
     <>
       <IconButton
@@ -81,8 +94,8 @@ export default function AccountPopover() {
         }}
       >
         <Avatar
-          src={user?.photoURL}
-          alt={user?.displayName}
+          src={user ? user.photoURL: ""}
+          alt={`${user ? user.first_name : ""} ${user ? user.last_name : ""}`}
           sx={{
             width: 36,
             height: 36,
@@ -90,15 +103,14 @@ export default function AccountPopover() {
           }}
         />
       </IconButton>
-
       <CustomPopover open={popover.open} onClose={popover.onClose} sx={{ width: 200, p: 0 }}>
         <Box sx={{ p: 2, pb: 1.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {user?.displayName}
+            {`${user ? user.first_name: ""} ${user ? user.last_name: ""}`}
           </Typography>
 
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {user?.email}
+            {user ? user.email: ""}
           </Typography>
         </Box>
 
@@ -124,3 +136,4 @@ export default function AccountPopover() {
     </>
   );
 }
+

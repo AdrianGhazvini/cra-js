@@ -1,13 +1,15 @@
+import { useEffect, useState } from 'react';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
-// hooks
-import { useMockedUser } from 'src/hooks/use-mocked-user';
 // _mock
 import { _appFeatured, _appAuthors, _appInstalled, _appRelated, _appInvoices } from 'src/_mock';
+// locales
+import { useLocales } from 'src/locales';
 // components
+import axios, { endpoints } from 'src/utils/axios';
 import { useSettingsContext } from 'src/components/settings';
 // assets
 import { SeoIllustration } from 'src/assets/illustrations';
@@ -18,29 +20,42 @@ import AppWelcome from '../app-welcome';
 import AppAreaInstalled from '../app-area-installed';
 import AppWidgetSummary from '../app-widget-summary';
 
-
-
-
 // ----------------------------------------------------------------------
 
 export default function OverviewAppView() {
-  const { user } = useMockedUser();
+  const { t } = useLocales();
+
+  const [user, setUser] = useState(null); 
+
   const theme = useTheme();
 
   const settings = useSettingsContext();
+
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const response = await axios.get(endpoints.auth.me);
+
+        setUser(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getUserData();
+  }, []);
 
   return (
     <Container maxWidth={settings.themeStretch ? false : 'xl'}>
       <Grid container spacing={3}>
         <Grid item xs={12} md={12}>
           <AppWelcome
-            title={`Welcome back 👋 \n ${user?.firstName}`}
-            description="Stay a step ahead with real-time credit score updates."
+            title={`${t('welcome_back')} 👋 \n ${user ? user.first_name : ""}`}
+            description={t('welcome_back_description')}
             img={<SeoIllustration />}
             action={
               <Link to="/dashboard/analytics" style={{ textDecoration: 'none' }}>
                 <Button variant="contained" color="primary">
-                  View Credit Report
+                 {t('view_report')}
                 </Button>
               </Link>
             }
@@ -93,8 +108,8 @@ export default function OverviewAppView() {
 
         <Grid item xs={12} md={12} lg={12}>
           <AppAreaInstalled
-            title="Credit History"
-            subheader="43% higher than last year"
+            title={t('credit_history')}
+            subheader={`43% ${t('higher_than_last_year')}`}
             chart={{
               categories: [
                 'Jan',

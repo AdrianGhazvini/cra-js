@@ -3,21 +3,16 @@ import PropTypes from 'prop-types';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
-import Tooltip from '@mui/material/Tooltip';
 import TableBody from '@mui/material/TableBody';
-import IconButton from '@mui/material/IconButton';
 import TableContainer from '@mui/material/TableContainer';
-import { tableCellClasses } from '@mui/material/TableCell';
-import { tablePaginationClasses } from '@mui/material/TablePagination';
-// components
-import Iconify from 'src/components/iconify';
+import Card from '@mui/material/Card';
 import {
   emptyRows,
   TableNoData,
   TableEmptyRows,
-  TableHeadCustom,
-  TablePaginationCustom,
 } from 'src/components/table';
+// locales
+import { useLocales } from 'src/locales';
 //
 import FileManagerTableRow from './file-manager-table-row';
 
@@ -35,7 +30,6 @@ export default function FileManagerTable({
   notFound,
   onDeleteRow,
   dataFiltered,
-  onOpenConfirm,
 }) {
   const theme = useTheme();
 
@@ -51,12 +45,11 @@ export default function FileManagerTable({
     onSelectAllRows,
     //
     onSort,
-    onChangeDense,
-    onChangePage,
-    onChangeRowsPerPage,
   } = table;
 
   const denseHeight = dense ? 58 : 78;
+
+  const { t } = useLocales();
 
   return (
     <>
@@ -82,34 +75,9 @@ export default function FileManagerTable({
               flexGrow: 1,
             }}
           >
-            <TableHeadCustom
-              order={order}
-              orderBy={orderBy}
-              headLabel={TABLE_HEAD}
-              rowCount={tableData.length}
-              numSelected={selected.length}
-              onSort={onSort}
-              onSelectAllRows={(checked) =>
-                onSelectAllRows(
-                  checked,
-                  tableData.map((row) => row.id)
-                )
-              }
-              sx={{
-                width: '100%',
-                [`& .${tableCellClasses.head}`]: {
-                  '&:first-of-type': {
-                    borderTopLeftRadius: 12,
-                    borderBottomLeftRadius: 12,
-                  },
-                  '&:last-of-type': {
-                    borderTopRightRadius: 12,
-                    borderBottomRightRadius: 12,
-                  },
-                },
-              }}
-            />
-
+            <Card sx={{ py: 1.5, px: 2, borderRadius: 1.5, backgroundColor: theme.palette.background.neutral, fontSize: "14px" }}>
+              {t('file_name')}
+            </Card>
             <TableBody>
               {dataFiltered
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -148,7 +116,6 @@ FileManagerTable.propTypes = {
   dataFiltered: PropTypes.array,
   notFound: PropTypes.bool,
   onDeleteRow: PropTypes.func,
-  onOpenConfirm: PropTypes.func,
   table: PropTypes.object,
   tableData: PropTypes.array,
 };

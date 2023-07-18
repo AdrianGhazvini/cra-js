@@ -15,18 +15,20 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useDoubleClick } from 'src/hooks/use-double-click';
+// locales
+import { useLocales } from 'src/locales';
 // components
 import Iconify from 'src/components/iconify';
 import CustomPopover, { usePopover } from 'src/components/custom-popover';
-import { useSnackbar } from 'src/components/snackbar';
 import { ConfirmDialog } from 'src/components/custom-dialog';
-import FileThumbnail from 'src/components/file-thumbnail';
 // utils
 import LetterManagerFileDetails from './letter-manager-file-details';
 
 // ----------------------------------------------------------------------
 
-export default function LetterManagerTableRow({ row_id, row, selected, onSelectRow, onDeleteRow }) {
+export default function LetterManagerTableRow({ row_id, row, selected, onDeleteRow }) {
+  const { t } = useLocales();
+
   const theme = useTheme();
 
   const { name: recipient, item_disputed, created, status, path } = row;
@@ -35,8 +37,6 @@ export default function LetterManagerTableRow({ row_id, row, selected, onSelectR
   const id = row_id;
 
   const newPath = `http://localhost:8000${path}`
-
-  const { enqueueSnackbar } = useSnackbar();
   
   const [textContent, setTextContent] = useState(''); 
 
@@ -93,7 +93,6 @@ export default function LetterManagerTableRow({ row_id, row, selected, onSelectR
     iframe.onload = () => {
       iframe.contentWindow.print();
     }
-    enqueueSnackbar('Printed!');
     // document.body.removeChild(iframe);
   }
 
@@ -173,7 +172,7 @@ export default function LetterManagerTableRow({ row_id, row, selected, onSelectR
         </TableCell>
 
         <TableCell align="right" onClick={handleClick} sx={{ whiteSpace: 'nowrap', display: { xs: 'none', md: 'table-cell' } }}>
-          {updatedStatus === true ? "Sent" : "Not Sent"}
+          {updatedStatus === true ? t('sent') : t('not_sent')}
         </TableCell>
 
         <TableCell
@@ -253,7 +252,6 @@ export default function LetterManagerTableRow({ row_id, row, selected, onSelectR
 LetterManagerTableRow.propTypes = {
   row_id: PropTypes.number,
   onDeleteRow: PropTypes.func,
-  onSelectRow: PropTypes.func,
   row: PropTypes.object,
   selected: PropTypes.bool,
 };

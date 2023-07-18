@@ -8,6 +8,8 @@ import Grid from '@mui/material/Grid';
 // hooks
 import { useMockedUser } from 'src/hooks/use-mocked-user';
 import { useBoolean } from 'src/hooks/use-boolean';
+// locales
+import { useLocales } from 'src/locales';
 // components
 import { useSettingsContext } from 'src/components/settings';
 import { useSnackbar } from 'src/components/snackbar';
@@ -20,9 +22,9 @@ import MailCompose from '../mail-compose';
 
 // ----------------------------------------------------------------------
 
-const LABEL_INDEX = 'inbox';
-
 export default function MailView() {
+  const { t } = useLocales();
+
   const { user } = useMockedUser();
 
   const settings = useSettingsContext();
@@ -46,7 +48,7 @@ export default function MailView() {
 
   const quillRef = useRef(null);
 
-  const placeholder = "Your dispute letter will be generated here...";
+  const placeholder = t('dispute_letter_placeholder');
 
   const handlePrint = () => {
     const editorContent = quillRef.current.getEditor().root.innerHTML;
@@ -135,7 +137,7 @@ export default function MailView() {
             mb: { xs: 3, md: 5 },
           }}
         >
-          Create Dispute Letters
+          {t('mail')}
         </Typography>
 
         <Stack
@@ -198,7 +200,7 @@ export default function MailView() {
                 disabled={!hasUserTyped}
                 onClick={handleSave}
               >
-                Save Letter
+                {t('save_letter')}
               </Button>
             </Grid>
             <Grid item xs={4}> 
@@ -209,7 +211,7 @@ export default function MailView() {
                 disabled={!hasUserTyped}
                 onClick={handlePrint}
               >
-                Print Letter
+                {t('print_letter')}
               </Button>
             </Grid>
             <Grid item xs={4}> 
@@ -220,7 +222,7 @@ export default function MailView() {
                 disabled={!hasUserTyped}
                 onClick={handleSent}
               >
-                Send it For You
+                {t('send_letter')}
               </Button>
             </Grid>
           </Grid>

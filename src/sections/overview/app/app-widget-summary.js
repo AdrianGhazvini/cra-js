@@ -7,6 +7,8 @@ import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
 // utils
 import { fNumber, fPercent } from 'src/utils/format-number';
+// locales
+import { useLocales } from 'src/locales';
 // components
 import Iconify from 'src/components/iconify';
 import Chart from 'src/components/chart';
@@ -15,6 +17,8 @@ import Chart from 'src/components/chart';
 
 export default function AppWidgetSummary({ title, points, chart, sx, ...other }) {
   const theme = useTheme();
+
+  const { t } = useLocales();
 
   const {
     colors = [theme.palette.primary.light, theme.palette.primary.main],
@@ -86,7 +90,7 @@ export default function AppWidgetSummary({ title, points, chart, sx, ...other })
         </Stack>
 
         <Typography variant="body2" sx={{ fontSize: '0.8rem', mt: 2 }}>
-          since joining
+          {t('since_joining')}
         </Typography>
       </Box>
 

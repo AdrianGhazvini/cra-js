@@ -10,6 +10,8 @@ import ListItemText from '@mui/material/ListItemText';
 import Paper from '@mui/material/Paper';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
+// locales
+import { useLocales } from 'src/locales';
 // components
 import Iconify from 'src/components/iconify';
 //
@@ -17,35 +19,31 @@ import PaymentNewCardDialog from './payment-new-card-dialog';
 
 // ----------------------------------------------------------------------
 
-const PAYMENT_OPTIONS = [
-  {
-    value: 'paypal',
-    label: 'Paypal',
-  },
-  {
-    value: 'credit',
-    label: 'Credit / Debit Card',
-  },
-];
-
-const CARD_OPTIONS = [
-  {
-    value: 'visa1',
-    label: '**** **** **** 1212 - Jimmy Holland',
-  },
-  {
-    value: 'visa2',
-    label: '**** **** **** 2424 - Shawn Stokes',
-  },
-  {
-    value: 'mastercard',
-    label: '**** **** **** 4545 - Cole Armstrong',
-  },
-];
-
-// ----------------------------------------------------------------------
-
 export default function PaymentMethods() {
+  const { t } = useLocales();
+
+  const PAYMENT_OPTIONS = [
+    {
+      value: 'credit',
+      label: t('credit_debit_card'),
+    },
+  ];
+
+  const CARD_OPTIONS = [
+    {
+      value: 'visa1',
+      label: '**** **** **** 1212 - Jimmy Holland',
+    },
+    {
+      value: 'visa2',
+      label: '**** **** **** 2424 - Shawn Stokes',
+    },
+    {
+      value: 'mastercard',
+      label: '**** **** **** 4545 - Cole Armstrong',
+    },
+  ];
+
   const newCard = useBoolean();
 
   const [method, setMethod] = useState('paypal');
@@ -57,7 +55,7 @@ export default function PaymentMethods() {
   return (
     <>
       <Stack spacing={5}>
-        <Typography variant="h6">Payment Method</Typography>
+        <Typography variant="h6">{t('payment_method')}</Typography>
 
         <Stack spacing={3}>
           {PAYMENT_OPTIONS.map((option) => (
@@ -82,6 +80,30 @@ export default function PaymentMethods() {
 
 function OptionItem({ option, selected, isCredit, onOpen, ...other }) {
   const { value, label } = option;
+
+  const { t } = useLocales();
+
+  const PAYMENT_OPTIONS = [
+    {
+      value: 'credit',
+      label: t('credit_debit_card'),
+    },
+  ];
+
+  const CARD_OPTIONS = [
+    {
+      value: 'visa1',
+      label: '**** **** **** 1212 - Jimmy Holland',
+    },
+    {
+      value: 'visa2',
+      label: '**** **** **** 2424 - Shawn Stokes',
+    },
+    {
+      value: 'mastercard',
+      label: '**** **** **** 4545 - Cole Armstrong',
+    },
+  ];
 
   return (
     <Paper
@@ -132,7 +154,7 @@ function OptionItem({ option, selected, isCredit, onOpen, ...other }) {
             pt: 2.5,
           }}
         >
-          <TextField select fullWidth label="Cards" SelectProps={{ native: true }}>
+          <TextField select fullWidth label={t('cards')} SelectProps={{ native: true }}>
             {CARD_OPTIONS.map((card) => (
               <option key={card.value} value={card.value}>
                 {card.label}
@@ -146,7 +168,7 @@ function OptionItem({ option, selected, isCredit, onOpen, ...other }) {
             startIcon={<Iconify icon="mingcute:add-line" />}
             onClick={onOpen}
           >
-            Add New Card
+            {t('add_new_card')}
           </Button>
         </Stack>
       )}

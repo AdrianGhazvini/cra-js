@@ -9,15 +9,15 @@ import { fTimestamp } from 'src/utils/format-time';
 // _mock
 import { _allDocFiles } from 'src/_mock/_file-manager-files';
 // hooks
-import { useMockedUser } from 'src/hooks/use-mocked-user';
 import { useBoolean } from 'src/hooks/use-boolean';
+// locales
+import { useLocales } from 'src/locales';
 // components
 import EmptyContent from 'src/components/empty-content';
 import { fileFormat } from 'src/components/file-thumbnail';
 import { ConfirmDialog } from 'src/components/custom-dialog';
 import { useSettingsContext } from 'src/components/settings';
 import { useTable, getComparator } from 'src/components/table';
-// axios
 import axios, { getUserLetters , endpoints } from 'src/utils/axios';
 //
 import LetterManagerTable from '../letter-manager-table';
@@ -45,29 +45,35 @@ export default function LetterManagerView() {
 
   const [filters, setFilters] = useState(defaultFilters);
 
-  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
 
-  const [error, setError] = useState(null);
+  const { t } = useLocales();
 
-  const { user } = useMockedUser();
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const response = await axios.get(endpoints.auth.me);
+
+        setUser(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getUserData();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("Fetching data ---- ");
-      setLoading(true);
       try {
-        const userId = user?.id;
+        const userId = user? user.id: 0;
         const response = await getUserLetters(userId);
-        console.log("Response ---- ", response);
         setTableData(response);
       } catch (e) {
-        setError(e);
-        console.log("Error ---- ", e);
+        console.log("Error ", e);
       }
-      setLoading(false);
     };
     fetchData();
-  }, [setTableData, setLoading, setError, user?.id]);
+  }, [setTableData, user]);
 
   const dateError =
     filters.startDate && filters.endDate
@@ -146,7 +152,7 @@ export default function LetterManagerView() {
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <Typography variant="h4">Letter Manager</Typography>
+          <Typography variant="h4">{t('letter_manager')}</Typography>
         </Stack>
 
         <Stack

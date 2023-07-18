@@ -33,7 +33,7 @@ import FileManagerFileDetails from './file-manager-file-details';
 
 // ----------------------------------------------------------------------
 
-export default function FileManagerTableRow({ row, selected, onSelectRow, onDeleteRow }) {
+export default function FileManagerTableRow({ row, selected, onDeleteRow }) {
   const theme = useTheme();
 
   const { name, size, modifiedAt, isFavorited } = row;
@@ -166,7 +166,6 @@ export default function FileManagerTableRow({ row, selected, onSelectRow, onDele
 
 FileManagerTableRow.propTypes = {
   onDeleteRow: PropTypes.func,
-  onSelectRow: PropTypes.func,
   row: PropTypes.object,
   selected: PropTypes.bool,
 };

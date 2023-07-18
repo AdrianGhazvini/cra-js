@@ -16,6 +16,8 @@ const OverviewAnalyticsPage = lazy(() => import('src/pages/dashboard/analytics')
 const FileManagerPage = lazy(() => import('src/pages/dashboard/file-manager'));
 // LETTER MANAGER
 const LetterManagerPage = lazy(() => import('src/pages/dashboard/letter-manager'));
+// PAYMENT
+const PaymentPage = lazy(() => import('src/pages/dashboard/payment'));
 // APP
 const BillingPage = lazy(() => import('src/pages/dashboard/billing'));
 const MailPage = lazy(() => import('src/pages/dashboard/mail'));
@@ -44,6 +46,7 @@ export const dashboardRoutes = [
       { path: 'mail', element: <MailPage /> },
       { path: 'billing', element: <BillingPage /> },
       { path: 'blank', element: <BlankPage /> },
+      { path: 'payment', element: <PaymentPage />}
     ],
   },
 ];

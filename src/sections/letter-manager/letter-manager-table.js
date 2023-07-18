@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
-import Tooltip from '@mui/material/Tooltip';
 import TableBody from '@mui/material/TableBody';
-import IconButton from '@mui/material/IconButton';
 import TableContainer from '@mui/material/TableContainer';
 import { tableCellClasses } from '@mui/material/TableCell';
 import { tablePaginationClasses } from '@mui/material/TablePagination';
+// locales
+import { useLocales } from 'src/locales';
 // components
 import {
   emptyRows,
@@ -23,16 +23,6 @@ import LetterManagerTableRow from './letter-manager-table-row';
 
 // ----------------------------------------------------------------------
 
-const TABLE_HEAD = [
-  { id: 'name', label: 'Recipient' },
-  { id: 'item_disputed', label: 'Item Disputed', hideOnMobile: true },
-  { id: 'created', label: 'Created', hideOnMobile: true },
-  { id: 'status', label: 'Status', align: 'right', hideOnMobile: true },
-  { id: '', label: ''},
-];
-
-// ----------------------------------------------------------------------
-
 export default function LetterManagerTable({
   table,
   tableData,
@@ -40,6 +30,16 @@ export default function LetterManagerTable({
   onDeleteRow,
   dataFiltered,
 }) {
+  const { t } = useLocales();
+
+  const TABLE_HEAD = [
+    { id: 'name', label: t('recipient') },
+    { id: 'item_disputed', label: t('item_disputed'), hideOnMobile: true },
+    { id: 'created', label: t('created_at'), hideOnMobile: true },
+    { id: 'status', label: t('status'), align: 'right', hideOnMobile: true },
+    { id: '', label: '' },
+  ];
+
   const theme = useTheme();
 
   const {

@@ -3,14 +3,16 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
+// locales
+import { useLocales } from 'src/locales';
 //
-import PaymentSummary from '../payment-summary';
 import PaymentMethods from '../payment-methods';
 import PaymentBillingAddress from '../payment-billing-address';
 
 // ----------------------------------------------------------------------
 
 export default function PaymentView() {
+  const { t } = useLocales();
   return (
     <Container
       sx={{
@@ -20,15 +22,11 @@ export default function PaymentView() {
       }}
     >
       <Typography variant="h3" align="center" paragraph>
-        {`Let's finish powering you up!`}
-      </Typography>
-
-      <Typography align="center" sx={{ color: 'text.secondary', mb: 5 }}>
-        Professional plan is right for you.
+        {t('payment')}
       </Typography>
 
       <Grid container rowSpacing={{ xs: 5, md: 0 }} columnSpacing={{ xs: 0, md: 5 }}>
-        <Grid xs={12} md={8}>
+        <Grid xs={12} md={12}>
           <Box
             gap={5}
             display="grid"
@@ -44,14 +42,9 @@ export default function PaymentView() {
               }),
             }}
           >
-            <PaymentBillingAddress />
-
             <PaymentMethods />
+            <PaymentBillingAddress />    
           </Box>
-        </Grid>
-
-        <Grid xs={12} md={4}>
-          <PaymentSummary />
         </Grid>
       </Grid>
     </Container>

@@ -70,11 +70,16 @@ export function useNavData() {
             icon: ICONS.folder,
           },
           {
+            title: t('payment'),
+            path: paths.dashboard.payment,
+            icon: ICONS.banking,
+          },
+          { title: t('blank'), path: paths.dashboard.blank, icon: ICONS.support },
+          /* {
             title: t('billing'),
             path: paths.dashboard.billing,
             icon: ICONS.invoice,
-          },
-          { title: t('blank'), path: paths.dashboard.blank, icon: ICONS.support },
+          }, */
         ],
       },
     ],

@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { endpoints, fetcher } from 'src/utils/axios';
+import axios, { endpoints, fetcher } from 'src/utils/axios';
 // @mui
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
@@ -12,7 +12,8 @@ import { fTimestamp } from 'src/utils/format-time';
 import { _allFiles, FILE_TYPE_OPTIONS } from 'src/_mock/_files';
 // hooks
 import { useBoolean } from 'src/hooks/use-boolean';
-import { useMockedUser } from 'src/hooks/use-mocked-user';
+// locales
+import { useLocales } from 'src/locales';
 // components
 import Iconify from 'src/components/iconify';
 import EmptyContent from 'src/components/empty-content';
@@ -38,6 +39,23 @@ const defaultFilters = {
 // ----------------------------------------------------------------------
 
 export default function FileManagerView() {
+  const { t } = useLocales();
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const response = await axios.get(endpoints.auth.me);
+
+        setUser(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getUserData();
+  }, []);
+
   const driver_license_table = useTable({ defaultRowsPerPage: 10 });
   const utility_bills_table = useTable({ defaultRowsPerPage: 10 });
 
@@ -55,11 +73,9 @@ export default function FileManagerView() {
   const [driversLicenseTableData, setDriversLicenseTableData] = useState([]);
   const [utilityBillsTableData, setUtilityBillsTableData] = useState([]);
 
-  const { user } = useMockedUser();
-
   useEffect(() => {
     const fetchImages = async () => {
-      const user_id = user?.id;
+      const user_id = user? user.id: 0;
 
       // Call the get function with the user_id to get the URL
       const url = endpoints.user_images.get(user_id);
@@ -90,11 +106,11 @@ export default function FileManagerView() {
     }
 
     fetchImages();
-  }, [user?.id]);
+  }, [user]);
 
   const refreshImages = async () => {
     // Fetch images code
-    const user_id = user?.id;
+    const user_id = user? user.id: "";
 
     // Call the get function with the user_id to get the URL
     const url = endpoints.user_images.get(user_id);
@@ -222,47 +238,10 @@ export default function FileManagerView() {
     });
   }, [utilityBillsDataFiltered.length, utilityBillsDataInPage.length, utility_bills_table, utilityBillsTableData]);
 
-
-  const handleResetFilters = useCallback(() => {
-    setFilters(defaultFilters);
-  }, []);
-
-  const renderFilters = (
-    <Stack
-      spacing={2}
-      direction={{ xs: 'column', md: 'row' }}
-      alignItems={{ xs: 'flex-end', md: 'center' }}
-    >
-      <FileManagerFilters
-        openDateRange={openDateRange.value}
-        onCloseDateRange={openDateRange.onFalse}
-        onOpenDateRange={openDateRange.onTrue}
-        //
-        filters={filters}
-        onFilters={handleFilters}
-        //
-        dateError={dateError}
-        typeOptions={FILE_TYPE_OPTIONS}
-      />
-    </Stack>
-  );
-
-  const renderResults = (
-    <FileManagerFiltersResult
-      filters={filters}
-      onResetFilters={handleResetFilters}
-      //
-      canReset={canReset}
-      onFilters={handleFilters}
-      //
-      results={driversLicenseDataFiltered.length}
-    />
-  );
-
   return (
     <>
       <Container maxWidth={settings.themeStretch ? false : 'lg'}>
-        <Typography variant="h4">Documents</Typography>
+        <Typography variant="h4">{t('file_manager')}</Typography>
         <Grid container spacing={3}>
           <Grid item xs={6}>
             <Button
@@ -272,7 +251,7 @@ export default function FileManagerView() {
               sx={{ mt: 3, minWidth: 203, minHeight: 40, width: '100%'}}
               color='primary'
             >
-              Upload Drivers License
+              {t('upload_license')}
             </Button>
             {notFound ? (
               <EmptyContent
@@ -321,7 +300,7 @@ export default function FileManagerView() {
               sx={{ mt: 3, minWidth: 203, minHeight: 40, width: '100%' }}
               color='primary'
             >
-              Upload Utility Bill
+              {t('upload_bill')}
             </Button>
             {notFound ? (
               <EmptyContent

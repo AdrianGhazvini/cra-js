@@ -100,6 +100,7 @@ export const paths = {
     fileManager: `${ROOTS.DASHBOARD}/file-manager`,
     letterManager: `${ROOTS.DASHBOARD}/letter-manager`,
     permission: `${ROOTS.DASHBOARD}/permission`,
+    payment: `${ROOTS.DASHBOARD}/payment`,
     general: {
       app: `${ROOTS.DASHBOARD}/app`,
       ecommerce: `${ROOTS.DASHBOARD}/ecommerce`,

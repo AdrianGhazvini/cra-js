@@ -7,15 +7,14 @@ import Button from '@mui/material/Button';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Grid from '@mui/material/Grid';
-// hooks
-import { useMockedUser } from 'src/hooks/use-mocked-user';
+// locales
+import { useLocales } from 'src/locales';
 // components
 import Iconify from 'src/components/iconify';
 import axios , { endpoints } from 'src/utils/axios';
 import { useSnackbar } from 'src/components/snackbar';
 //
 import Editor from 'src/components/editor'; 
-import { set } from 'lodash';
 
 
 // ----------------------------------------------------------------------
@@ -35,9 +34,9 @@ export default function LetterManagerFileDetails({
   setConfirm,
   ...other
 }) {
-  const { user } = useMockedUser();
-
   const { enqueueSnackbar } = useSnackbar();
+
+  const { t } = useLocales();
 
   const quillRef = useRef(null);
 
@@ -77,7 +76,7 @@ export default function LetterManagerFileDetails({
         status: true,
       });
       setUpdatedStatus(true);
-      enqueueSnackbar('Status Updated Successfully!');
+      enqueueSnackbar(t('status_updated'));
     } catch (error) {
       console.error('Failed to Update Status:', error);
     }
@@ -91,7 +90,7 @@ export default function LetterManagerFileDetails({
         name: letter_name,
         letter: editorContent,
       });
-      enqueueSnackbar('Letter Saved Successfully!');
+      enqueueSnackbar(t('letter_saved'));
     } catch (error) {
       console.error('Failed to save letter:', error);
     }

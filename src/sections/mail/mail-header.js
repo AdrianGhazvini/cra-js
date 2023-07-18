@@ -5,8 +5,8 @@ import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
-// hooks
-import { useMockedUser } from 'src/hooks/use-mocked-user';
+// locales
+import { useLocales } from 'src/locales';
 // axios
 import { fetcher, endpoints, getUserImages } from 'src/utils/axios';
 
@@ -26,6 +26,7 @@ export default function MailHeader({
   const [disputeReasons, setDisputeReasons] = useState([]);
   const disputeItem = watch('disputeItem');
   const disputeReason = watch('disputeReason');
+  const { t } = useLocales();
 
   const fetchLetters = async () => {
     try {
@@ -105,9 +106,9 @@ export default function MailHeader({
     <FormProvider {...methods}>
       <Stack direction="column" flexGrow={1} spacing={2}>
         <RHFSelect
-          label="Dispute Item"
+          label={t('dispute_item')}
           name="disputeItem"
-          placeholder="Pick the item you want to dispute."
+          placeholder={t('pick_dispute_item')}
         >
           {disputeItems.map((option) => (
             <MenuItem key={option} value={option} style={{ whiteSpace: 'normal' }}>
@@ -117,9 +118,9 @@ export default function MailHeader({
         </RHFSelect>
 
         <RHFSelect
-          label="Dispute Reason"
+          label={t('dispute_reason')}
           name="disputeReason"
-          placeholder="Pick your dispute reason."
+          placeholder={t('pick_dispute_reason')}
         >
           {disputeReasons.map((option) => (
             <MenuItem key={option} value={option} style={{ whiteSpace: 'normal' }}>
@@ -134,7 +135,7 @@ export default function MailHeader({
           disabled={!disputeItem || !disputeReason}
           style={{ minHeight: '50px', marginBottom: '8px' }}
         >
-          Generate Dispute Letter
+          {t('generate_dispute_letter')}
         </Button>
       </Stack>
     </FormProvider>
